@@ -75,7 +75,7 @@ public class FeedListPresenterTest
     }
 
     /**
-     * the feed data source is mocked to return a hard coded rss feed
+     * the feed data source is mocked to return a hard coded rss feed after some delay
      */
     @Test
     public void testGetFeed() throws Exception
@@ -85,12 +85,21 @@ public class FeedListPresenterTest
         String channelName = "Ahmed's Channel";
         Channel channel = new Channel(channelName, feedList);
         RSSFeed rssFeed = new RSSFeed(channel);
-        when(mFeedRemoteDataSource.getFeed()).thenReturn(rssFeed);
+        long requestDelayInMillis = 600;
+        when(mFeedRemoteDataSource.getFeed()).then(new Answer<RSSFeed>()
+        {
+            @Override
+            public RSSFeed answer(InvocationOnMock invocation) throws Throwable
+            {
+                Thread.sleep(requestDelayInMillis);
+                return rssFeed;
+            }
+        });
 
         // ask the presenter to get the feed and check the view
         mPresenter.getFeed();
         verify(mView).showProgress();
-        verify(mView).showFeedList(feedList);
+        verify(mView, timeout(3000)).showFeedList(feedList);
         verify(mView).hideProgress();
     }
 
@@ -108,9 +117,7 @@ public class FeedListPresenterTest
         // ask the presenter to get the feed and check the view
         mPresenter.getFeed();
         verify(mView).showProgress();
-        // add a delay or else the test would fail if they ran one after the other
-        Thread.sleep(100);
-        verify(mView).showError(errorMessage);
+        verify(mView, timeout(3000)).showError(errorMessage);
         verify(mView).hideProgress();
     }
 
