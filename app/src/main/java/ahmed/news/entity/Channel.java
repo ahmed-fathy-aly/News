@@ -22,6 +22,10 @@ public class Channel
     @ElementList(entry = "item", inline = true)
     List<Feedtem> feedtemList;
 
+    public Channel()
+    {
+    }
+
     public Channel(String title, List<Feedtem> feedList)
     {
         this.title = title;

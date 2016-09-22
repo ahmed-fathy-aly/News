@@ -33,6 +33,10 @@ public class Feedtem
     @Namespace(prefix = "media")
     private Image image;
 
+    public Feedtem()
+    {
+    }
+
     public Feedtem(String title)
     {
         this.title = title;

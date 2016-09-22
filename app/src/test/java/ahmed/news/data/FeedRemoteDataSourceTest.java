@@ -33,7 +33,7 @@ public class FeedRemoteDataSourceTest
         assertNotNull(feed.getChannel());
         assertNotNull(feed.getChannel().getFeedtemList());
         assertTrue(feed.getChannel().getFeedtemList().size() > 0);
-        for(Feedtem feedtem : feed.getChannel().getFeedtemList())
+        for (Feedtem feedtem : feed.getChannel().getFeedtemList())
         {
             assertNotNull(feedtem);
             assertNotNull(feedtem.getTitle());

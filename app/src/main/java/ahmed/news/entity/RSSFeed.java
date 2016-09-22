@@ -13,11 +13,14 @@ public class RSSFeed
     @Element(name = "channel")
     private Channel channel;
 
+    public RSSFeed()
+    {
+    }
+
     public RSSFeed(Channel channel)
     {
         this.channel = channel;
     }
-
 
     public Channel getChannel ()
     {

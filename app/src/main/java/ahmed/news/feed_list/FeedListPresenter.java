@@ -105,4 +105,12 @@ public class FeedListPresenter implements FeedListContract.Presenter
     {
         mView = null;
     }
+
+    /**
+     * used for mocking in the tests
+     */
+    public FeedListContract.View getView()
+    {
+        return mView;
+    }
 }
