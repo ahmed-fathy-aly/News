@@ -15,6 +15,7 @@ import android.widget.FrameLayout;
 
 import java.util.List;
 
+import ahmed.news.App;
 import ahmed.news.R;
 import ahmed.news.entity.Feedtem;
 import butterknife.Bind;
@@ -73,7 +74,8 @@ public class FeedListFragment extends Fragment implements FeedListContract.View,
         ButterKnife.bind(this, view);
 
         // setup the presenter
-        mPresenter = createPresenter();
+        App app = (App) getActivity().getApplication();
+        app.getComponent().inject(this);
         mPresenter.registerView(this);
         mPresenter.getFeed();
 
@@ -189,13 +191,7 @@ public class FeedListFragment extends Fragment implements FeedListContract.View,
         mPresenter.syncFeed();
     }
 
-    /**
-     * only used for making the fragment use a mock presenter
-     */
-    public FeedListContract.Presenter createPresenter()
-    {
-        return new FeedListPresenter();
-    }
+
 
     /**
      * This interface must be implemented by activities that contain this

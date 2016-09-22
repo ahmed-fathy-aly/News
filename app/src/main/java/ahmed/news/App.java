@@ -9,10 +9,31 @@ import timber.log.Timber;
  */
 public class App extends Application
 {
+    private AppComponent mComponent;
+
     @Override
     public void onCreate()
     {
         super.onCreate();
         Timber.plant(new Timber.DebugTree());
     }
+
+    /**
+     * only one component to inject dependencies
+     */
+    public AppComponent getComponent()
+    {
+        if (mComponent == null)
+            mComponent = DaggerAppComponent.builder().build();
+        return mComponent;
+    }
+
+    /**
+     * only used for testing, to inject mocked dependencies
+     */
+    public void setComponent(AppComponent component)
+    {
+        mComponent = component;
+    }
 }
+

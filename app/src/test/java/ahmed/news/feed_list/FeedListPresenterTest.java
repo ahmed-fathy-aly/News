@@ -2,12 +2,16 @@ package ahmed.news.feed_list;
 
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.invocation.InvocationOnMock;
+import org.mockito.junit.MockitoJUnit;
+import org.mockito.junit.MockitoRule;
 import org.mockito.stubbing.Answer;
 
 import java.io.IOException;
@@ -33,13 +37,18 @@ import static org.mockito.Mockito.*;
 @RunWith(JUnit4.class)
 public class FeedListPresenterTest
 {
-    private FeedListPresenter mPresenter;
 
     @Mock
     private FeedListContract.View mView;
 
     @Mock
     private FeedRemoteDataSource mFeedRemoteDataSource;
+
+    @InjectMocks
+    private FeedListPresenter mPresenter;
+
+    @Rule
+    public MockitoRule mockitoRule = MockitoJUnit.rule();
 
     /**
      * replaces the android main thread to enable testing locally
@@ -59,9 +68,7 @@ public class FeedListPresenterTest
         });
 
         // create the presenter
-        mPresenter = new FeedListPresenter();
         mPresenter.registerView(mView);
-        mPresenter.setFeedRemoteDataSource(mFeedRemoteDataSource);
     }
 
     /**

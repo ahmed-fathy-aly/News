@@ -6,6 +6,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.inject.Inject;
+
 import ahmed.news.data.FeedRemoteDataSource;
 import ahmed.news.entity.Feedtem;
 import ahmed.news.entity.RSSFeed;
@@ -23,15 +25,9 @@ public class FeedListPresenter implements FeedListContract.Presenter
     private FeedListContract.View mView;
     private FeedRemoteDataSource mFeedRemoteDataSource;
 
-    public FeedListPresenter()
-    {
-        setFeedRemoteDataSource(new FeedRemoteDataSource());
-    }
 
-    /**
-     * only uses for testing, but the datasource will always be initialized in the constructor
-     */
-    public void setFeedRemoteDataSource(FeedRemoteDataSource feedRemoteDataSource)
+    @Inject
+    public FeedListPresenter(FeedRemoteDataSource feedRemoteDataSource)
     {
         mFeedRemoteDataSource = feedRemoteDataSource;
     }
