@@ -1,6 +1,8 @@
 package ahmed.news;
 
 import ahmed.news.data.FeedRemoteDataSource;
+import ahmed.news.feed_item_details.FeedItemDetailsContract;
+import ahmed.news.feed_item_details.FeedItemDetailsPresenter;
 import ahmed.news.feed_list.FeedListContract;
 import ahmed.news.feed_list.FeedListPresenter;
 import dagger.Module;
@@ -24,4 +26,9 @@ public class AppModule
         return new FeedListPresenter(feedRemoteDataSource);
     }
 
+    @Provides
+    public FeedItemDetailsContract.Presenter provideFeedItemDetailsPresenter()
+    {
+        return new FeedItemDetailsPresenter();
+    }
 }

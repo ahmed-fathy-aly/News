@@ -19,6 +19,15 @@ public class Image
     @Attribute(name = "url")
     private String url;
 
+    public Image()
+    {
+    }
+
+    public Image(String url)
+    {
+        this.url = url;
+    }
+
     public int getWidth()
     {
         return width;
