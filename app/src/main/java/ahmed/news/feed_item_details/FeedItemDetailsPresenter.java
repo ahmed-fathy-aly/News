@@ -11,7 +11,7 @@ import timber.log.Timber;
  */
 public class FeedItemDetailsPresenter implements FeedItemDetailsContract.Presenter
 {
-    private FeedItemDetailsContract.View mView;
+    protected FeedItemDetailsContract.View mView;
     private FeedItem mFeedItem;
 
     @Inject

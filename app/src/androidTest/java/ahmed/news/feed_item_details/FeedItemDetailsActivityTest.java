@@ -1,18 +1,35 @@
 package ahmed.news.feed_item_details;
 
 import android.content.Intent;
+import android.support.annotation.Nullable;
 import android.support.test.InstrumentationRegistry;
 import android.support.test.espresso.contrib.RecyclerViewActions;
 import android.support.test.rule.ActivityTestRule;
 
+import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 
+import java.io.IOException;
+import java.net.URLDecoder;
+
+import ahmed.news.App;
+import ahmed.news.AppComponent;
+import ahmed.news.AppModule;
 import ahmed.news.R;
+import ahmed.news.data.FeedRemoteDataSource;
+import ahmed.news.entity.Channel;
 import ahmed.news.entity.FeedItem;
 import ahmed.news.entity.Image;
+import ahmed.news.entity.RSSFeed;
+import ahmed.news.feed_list.DaggerFeedListActivityTest_TestComponent;
 import ahmed.news.feed_list.FeedAdapterViewHolderMatcher;
 import ahmed.news.feed_list.FeedListActivity;
+import ahmed.news.feed_list.FeedListContract;
+import ahmed.news.feed_list.FeedListPresenter;
+import dagger.Component;
+import dagger.Module;
+import dagger.Provides;
 import timber.log.Timber;
 
 import static android.support.test.espresso.Espresso.onView;
@@ -26,6 +43,7 @@ import static android.support.test.espresso.action.ViewActions.scrollTo;
 import static org.junit.Assert.*;
 
 /**
+ * tests the feed item details UI and mocks the presenter
  * Created by ahmed on 9/24/2016.
  */
 public class FeedItemDetailsActivityTest
@@ -36,12 +54,10 @@ public class FeedItemDetailsActivityTest
     final static String DESCRIPTION = "Description bla \n bla \n  bla \n bla \n bla \n bla \n bla \n" +
             " bla \n bla \n bla \n bla \n bla \n bla \n" +
             " bla \n bla \n bla \n bla \n bla \n bla \n";
-
     final static String DATE = "Sat, 24 Sep 2016 00:33:31 GMT";
     final static String URL = "myFeed.com";
     final static String URI = "http:myFeed.com";
     static FeedItem FEED_ITEM;
-
     static
     {
         FEED_ITEM = new FeedItem();
@@ -56,6 +72,75 @@ public class FeedItemDetailsActivityTest
     public ActivityTestRule<FeedItemDetailsActivity> activityRule =
             new ActivityTestRule<>(FeedItemDetailsActivity.class, true, false);
 
+
+    /**
+     * lets the application use the test component so it can inject the mocked presenter
+     */
+    @Before
+    public void setup()
+    {
+        App app = (App) InstrumentationRegistry.getInstrumentation()
+                .getTargetContext().getApplicationContext();
+
+        app.setComponent(
+                DaggerFeedItemDetailsActivityTest_TestComponent
+                        .builder()
+                        .testModule(new TestModule())
+                        .build()
+        );
+
+    }
+
+    /**
+     * uses the test module instead of the AppModule
+     */
+    @Component(modules = {TestModule.class})
+    interface TestComponent extends AppComponent
+    {
+    }
+
+    /**
+     * provides a mock presenter
+     */
+    @Module
+    class TestModule extends AppModule
+    {
+        @Provides
+        public FeedRemoteDataSource provideFeedRemoteDataSource()
+        {
+           return null;
+        }
+
+        @Provides
+        public FeedListContract.Presenter provideFeedListPresenter(@Nullable FeedRemoteDataSource feedRemoteDataSource)
+        {
+            return null;
+        }
+
+        @Provides
+        public FeedItemDetailsPresenter provideFeedItemDetailsPreseneter()
+        {
+            return new FeedItemDetailsPresenter()
+            {
+                @Override
+                public void showFeedDetails()
+                {
+                    mView.showTitle(TITLE);
+                    mView.showDescription(DESCRIPTION);
+                    mView.showImage(IMAGE);
+                    mView.showDate(DATE);
+                    mView.showUrlString(URL);
+                }
+
+                @Override
+                public void onLinkClicked()
+                {
+                    mView.openUri(URI);
+                }
+            };
+        }
+
+    }
 
     /**
      * checks that the feed list is displayed correctly
