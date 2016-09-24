@@ -1,7 +1,5 @@
 package ahmed.news.feed_list;
 
-import android.content.Context;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -102,9 +100,7 @@ public class FeedListPresenter implements FeedListContract.Presenter
         mView = null;
     }
 
-    /**
-     * used for mocking in the tests
-     */
+    @Override
     public FeedListContract.View getView()
     {
         return mView;

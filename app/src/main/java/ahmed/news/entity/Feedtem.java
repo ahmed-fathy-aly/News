@@ -42,6 +42,12 @@ public class Feedtem
         this.title = title;
     }
 
+    public Feedtem(String title, String pubData)
+    {
+        this.title = title;
+        this.pubDate = pubData;
+    }
+
     @Nullable
     public Image getImage()
     {

@@ -1,5 +1,7 @@
 package ahmed.news;
 
+import javax.inject.Scope;
+
 import ahmed.news.feed_list.FeedListContract;
 import ahmed.news.feed_list.FeedListFragment;
 import dagger.Component;
@@ -11,5 +13,5 @@ import dagger.Component;
 public interface AppComponent
 {
     void inject(FeedListContract.Presenter presenter);
-    void inject(FeedListContract.View view);
+    void inject(FeedListFragment fragment);
 }

@@ -29,7 +29,7 @@ public class App extends Application
     }
 
     /**
-     * only used for testing, to inject mocked dependencies
+     * only used for testing, to have another component that injects mocked objects
      */
     public void setComponent(AppComponent component)
     {

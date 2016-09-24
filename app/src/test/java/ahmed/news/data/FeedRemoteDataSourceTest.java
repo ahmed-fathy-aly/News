@@ -40,6 +40,7 @@ public class FeedRemoteDataSourceTest
             assertNotNull(feedtem.getDescription());
             assertNotNull(feedtem.getLink());
             assertNotNull(feedtem.getPubDate());
+            System.out.println(feedtem.getPubDate());
         }
     }
 }

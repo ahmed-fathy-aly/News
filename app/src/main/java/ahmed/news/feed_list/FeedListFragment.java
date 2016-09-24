@@ -2,6 +2,7 @@ package ahmed.news.feed_list;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -15,7 +16,10 @@ import android.widget.FrameLayout;
 
 import java.util.List;
 
+import javax.inject.Inject;
+
 import ahmed.news.App;
+import ahmed.news.DaggerAppComponent;
 import ahmed.news.R;
 import ahmed.news.entity.Feedtem;
 import butterknife.Bind;
@@ -38,7 +42,8 @@ public class FeedListFragment extends Fragment implements FeedListContract.View,
 
     /* fields */
     private OnFragmentInteractionListener mListener;
-    private FeedListContract.Presenter mPresenter;
+    @Inject
+    FeedListContract.Presenter mPresenter;
     private FeedAdapter mAdapterFeed;
 
     public FeedListFragment()
@@ -75,9 +80,8 @@ public class FeedListFragment extends Fragment implements FeedListContract.View,
 
         // setup the presenter
         App app = (App) getActivity().getApplication();
-        app.getComponent().inject(this);
-        mPresenter.registerView(this);
-        mPresenter.getFeed();
+        app.getComponent().inject(FeedListFragment.this);
+        mPresenter.registerView(FeedListFragment.this);
 
         // setup swipe to refresh
         mSwipeRefresh.setOnRefreshListener(this);
@@ -88,6 +92,7 @@ public class FeedListFragment extends Fragment implements FeedListContract.View,
         mRecyclerViewFeed.setLayoutManager(new LinearLayoutManager(getContext()));
         mRecyclerViewFeed.setAdapter(mAdapterFeed);
 
+        mPresenter.getFeed();
         return view;
     }
 
@@ -126,7 +131,6 @@ public class FeedListFragment extends Fragment implements FeedListContract.View,
      */
     public void setPresenter(FeedListPresenter presenter)
     {
-        Timber.d("set presenter " + (mPresenter == null));
         if (mPresenter != null)
             mPresenter.unregisterView();
         mPresenter = presenter;
@@ -190,7 +194,6 @@ public class FeedListFragment extends Fragment implements FeedListContract.View,
     {
         mPresenter.syncFeed();
     }
-
 
 
     /**
