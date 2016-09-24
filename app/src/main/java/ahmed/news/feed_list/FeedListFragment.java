@@ -138,7 +138,8 @@ public class FeedListFragment extends Fragment implements FeedListContract.View,
     @Override
     public void onItemClick(int position, FeedItem feedItem, View view)
     {
-        // TODO notify activity of the click
+        if (mListener != null)
+            mListener.onFeedItemClicked(feedItem, view);
     }
 
     @Override
@@ -202,5 +203,6 @@ public class FeedListFragment extends Fragment implements FeedListContract.View,
      */
     public interface OnFragmentInteractionListener
     {
+        void onFeedItemClicked(FeedItem feedItem, View view);
     }
 }
