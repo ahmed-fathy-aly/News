@@ -20,26 +20,26 @@ public class Channel
     private String description;
 
     @ElementList(entry = "item", inline = true)
-    List<Feedtem> feedtemList;
+    List<FeedItem> feedItemList;
 
     public Channel()
     {
     }
 
-    public Channel(String title, List<Feedtem> feedList)
+    public Channel(String title, List<FeedItem> feedList)
     {
         this.title = title;
-        this.feedtemList = feedList;
+        this.feedItemList = feedList;
     }
 
-    public List<Feedtem> getFeedtemList()
+    public List<FeedItem> getFeedItemList()
     {
-        return feedtemList;
+        return feedItemList;
     }
 
-    public void setFeedtemList(List<Feedtem> feedtemList)
+    public void setFeedItemList(List<FeedItem> feedItemList)
     {
-        this.feedtemList = feedtemList;
+        this.feedItemList = feedItemList;
     }
 
     public String getTitle()

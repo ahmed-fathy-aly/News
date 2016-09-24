@@ -7,7 +7,7 @@ import java.util.List;
 import javax.inject.Inject;
 
 import ahmed.news.data.FeedRemoteDataSource;
-import ahmed.news.entity.Feedtem;
+import ahmed.news.entity.FeedItem;
 import ahmed.news.entity.RSSFeed;
 import rx.Observable;
 import rx.Observer;
@@ -74,8 +74,8 @@ public class FeedListPresenter implements FeedListContract.Presenter
                     {
                         if (mView != null)
                         {
-                            List<Feedtem> feedList = rssFeed.getChannel().getFeedtemList();
-                            mView.showFeedList(feedList != null ? feedList : new ArrayList<Feedtem>());
+                            List<FeedItem> feedList = rssFeed.getChannel().getFeedItemList();
+                            mView.showFeedList(feedList != null ? feedList : new ArrayList<FeedItem>());
                             mView.showTitle(rssFeed.getChannel().getTitle());
                         }
                     }

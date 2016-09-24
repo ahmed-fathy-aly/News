@@ -2,7 +2,6 @@ package ahmed.news.feed_list;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -19,9 +18,8 @@ import java.util.List;
 import javax.inject.Inject;
 
 import ahmed.news.App;
-import ahmed.news.DaggerAppComponent;
 import ahmed.news.R;
-import ahmed.news.entity.Feedtem;
+import ahmed.news.entity.FeedItem;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import timber.log.Timber;
@@ -138,7 +136,7 @@ public class FeedListFragment extends Fragment implements FeedListContract.View,
     }
 
     @Override
-    public void onItemClick(int position, Feedtem feedItem, View view)
+    public void onItemClick(int position, FeedItem feedItem, View view)
     {
         // TODO notify activity of the click
     }
@@ -177,7 +175,7 @@ public class FeedListFragment extends Fragment implements FeedListContract.View,
     }
 
     @Override
-    public void showFeedList(List<Feedtem> feedList)
+    public void showFeedList(List<FeedItem> feedList)
     {
         mAdapterFeed.setData(feedList);
     }

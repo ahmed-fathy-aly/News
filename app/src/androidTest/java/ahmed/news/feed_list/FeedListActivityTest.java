@@ -16,7 +16,7 @@ import ahmed.news.App;
 import ahmed.news.AppComponent;
 import ahmed.news.R;
 import ahmed.news.data.FeedRemoteDataSource;
-import ahmed.news.entity.Feedtem;
+import ahmed.news.entity.FeedItem;
 import dagger.Component;
 import dagger.Module;
 import dagger.Provides;
@@ -32,11 +32,11 @@ import static android.support.test.espresso.matcher.ViewMatchers.withId;
 public class FeedListActivityTest
 {
     /* constant mock data */
-    List<Feedtem> FEED_LIST = Arrays.asList(
-            new Feedtem("title1", "Sat, 24 Sep 2016 00:33:31 GMT"),
-            new Feedtem("title2", "Fri, 23 Sep 2016 21:10:15 GMT")
-            , new Feedtem("title3", "Fri, 23 Sep 2016 21:41:30 GMT")
-            , new Feedtem("title4", "Fri, 23 Sep 2016 19:15:43 GMT")
+    List<FeedItem> FEED_LIST = Arrays.asList(
+            new FeedItem("title1", "Sat, 24 Sep 2016 00:33:31 GMT"),
+            new FeedItem("title2", "Fri, 23 Sep 2016 21:10:15 GMT")
+            , new FeedItem("title3", "Fri, 23 Sep 2016 21:41:30 GMT")
+            , new FeedItem("title4", "Fri, 23 Sep 2016 19:15:43 GMT")
     );
 
 

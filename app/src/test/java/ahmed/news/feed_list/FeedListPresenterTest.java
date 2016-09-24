@@ -20,14 +20,13 @@ import java.util.List;
 
 import ahmed.news.data.FeedRemoteDataSource;
 import ahmed.news.entity.Channel;
-import ahmed.news.entity.Feedtem;
+import ahmed.news.entity.FeedItem;
 import ahmed.news.entity.RSSFeed;
 import rx.Scheduler;
 import rx.android.plugins.RxAndroidPlugins;
 import rx.android.plugins.RxAndroidSchedulersHook;
 import rx.schedulers.Schedulers;
 
-import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
 /**
@@ -88,7 +87,7 @@ public class FeedListPresenterTest
     public void testGetFeed() throws Exception
     {
         // create dummy feed data
-        List<Feedtem> feedList = Arrays.asList(new Feedtem("item1"), new Feedtem("item2"));
+        List<FeedItem> feedList = Arrays.asList(new FeedItem("item1"), new FeedItem("item2"));
         String channelName = "Ahmed's Channel";
         Channel channel = new Channel(channelName, feedList);
         RSSFeed rssFeed = new RSSFeed(channel);

@@ -1,10 +1,8 @@
 package ahmed.news.feed_list;
 
-import android.content.Context;
-
 import java.util.List;
 
-import ahmed.news.entity.Feedtem;
+import ahmed.news.entity.FeedItem;
 
 /**
  * Defines interfaces for the presenter and view that handle showing a list of feed items
@@ -33,7 +31,7 @@ public class FeedListContract
         /**
          * shows a listed-display of feed
          */
-        void showFeedList(List<Feedtem> feedList);
+        void showFeedList(List<FeedItem> feedList);
 
         /**
          * shows the title of the channel

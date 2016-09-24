@@ -14,7 +14,7 @@ import java.util.List;
  * Created by ahmed on 9/20/2016.
  */
 @Root(strict = false, name = "item")
-public class Feedtem
+public class FeedItem
 {
     @Element(name = "pubDate")
     private String pubDate;
@@ -33,16 +33,16 @@ public class Feedtem
     @Namespace(prefix = "media")
     private Image image;
 
-    public Feedtem()
+    public FeedItem()
     {
     }
 
-    public Feedtem(String title)
+    public FeedItem(String title)
     {
         this.title = title;
     }
 
-    public Feedtem(String title, String pubData)
+    public FeedItem(String title, String pubData)
     {
         this.title = title;
         this.pubDate = pubData;

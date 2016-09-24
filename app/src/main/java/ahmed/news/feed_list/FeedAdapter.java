@@ -14,7 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import ahmed.news.R;
-import ahmed.news.entity.Feedtem;
+import ahmed.news.entity.FeedItem;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.internal.DebouncingOnClickListener;
@@ -27,7 +27,7 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.FeedViewHolder
 {
     private Context mContext;
     private Listener mListener;
-    private List<Feedtem> mData;
+    private List<FeedItem> mData;
 
     public FeedAdapter(Context context)
     {
@@ -46,7 +46,7 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.FeedViewHolder
     /**
      * replaces the data and updates the UI
      */
-    public void setData(List<Feedtem> newData)
+    public void setData(List<FeedItem> newData)
     {
         mData.clear();
         mData.addAll(newData);
@@ -65,7 +65,7 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.FeedViewHolder
     @Override
     public void onBindViewHolder(FeedViewHolder holder, int position)
     {
-        Feedtem feedItem = mData.get(position);
+        FeedItem feedItem = mData.get(position);
         holder.textViewTitle.setText(feedItem.getTitle());
         holder.textViewTime.setText(feedItem.getPubDate());
         if (feedItem.getImage() != null && feedItem.getImage().getUrl().length() > 0)
@@ -105,7 +105,7 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.FeedViewHolder
                     if (mListener != null)
                     {
                         int position = getAdapterPosition();
-                        Feedtem feedItem = mData.get(position);
+                        FeedItem feedItem = mData.get(position);
                         mListener.onItemClick(position, feedItem, itemView);
                     }
                 }
@@ -119,6 +119,6 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.FeedViewHolder
         /**
          * called when an item in the list is clicked
          */
-        void onItemClick(int position, Feedtem feedItem, View view);
+        void onItemClick(int position, FeedItem feedItem, View view);
     }
 }

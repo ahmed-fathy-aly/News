@@ -3,7 +3,7 @@ package ahmed.news.data;
 import org.junit.Before;
 import org.junit.Test;
 
-import ahmed.news.entity.Feedtem;
+import ahmed.news.entity.FeedItem;
 import ahmed.news.entity.RSSFeed;
 
 import static org.junit.Assert.assertNotNull;
@@ -31,16 +31,16 @@ public class FeedRemoteDataSourceTest
         RSSFeed feed = feedRemoteDataSource.getFeed();
         assertNotNull(feed);
         assertNotNull(feed.getChannel());
-        assertNotNull(feed.getChannel().getFeedtemList());
-        assertTrue(feed.getChannel().getFeedtemList().size() > 0);
-        for (Feedtem feedtem : feed.getChannel().getFeedtemList())
+        assertNotNull(feed.getChannel().getFeedItemList());
+        assertTrue(feed.getChannel().getFeedItemList().size() > 0);
+        for (FeedItem feedItem : feed.getChannel().getFeedItemList())
         {
-            assertNotNull(feedtem);
-            assertNotNull(feedtem.getTitle());
-            assertNotNull(feedtem.getDescription());
-            assertNotNull(feedtem.getLink());
-            assertNotNull(feedtem.getPubDate());
-            System.out.println(feedtem.getPubDate());
+            assertNotNull(feedItem);
+            assertNotNull(feedItem.getTitle());
+            assertNotNull(feedItem.getDescription());
+            assertNotNull(feedItem.getLink());
+            assertNotNull(feedItem.getPubDate());
+            System.out.println(feedItem.getPubDate());
         }
     }
 }
