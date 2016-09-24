@@ -100,9 +100,4 @@ public class FeedListPresenter implements FeedListContract.Presenter
         mView = null;
     }
 
-    @Override
-    public FeedListContract.View getView()
-    {
-        return mView;
-    }
 }

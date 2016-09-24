@@ -83,7 +83,7 @@ public class FeedListActivityTest
         @Provides
         public FeedListContract.Presenter provideFeedListPresenter(@Nullable FeedRemoteDataSource feedRemoteDataSource)
         {
-            return new MockPresenter(null);
+            return new MockPresenter();
         }
 
     }
@@ -92,19 +92,35 @@ public class FeedListActivityTest
     /**
      * when asked to show the feed, it will show a hard coded feed list
      */
-    class MockPresenter extends FeedListPresenter
+    class MockPresenter implements FeedListContract.Presenter
     {
 
-        public MockPresenter(FeedRemoteDataSource feedRemoteDataSource)
-        {
-            super(feedRemoteDataSource);
-        }
+        private FeedListContract.View mView;
 
         @Override
         public void getFeed()
         {
-            getView().showFeedList(FEED_LIST);
+            mView.showFeedList(FEED_LIST);
         }
+
+        @Override
+        public void syncFeed()
+        {
+
+        }
+
+        @Override
+        public void registerView(FeedListContract.View view)
+        {
+            mView = view;
+        }
+
+        @Override
+        public void unregisterView()
+        {
+            mView = null;
+        }
+
     }
 
 

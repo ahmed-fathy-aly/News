@@ -70,10 +70,6 @@ public class FeedListContract
          */
         void unregisterView();
 
-        /**
-         * returns the view registered or null if no view is registered
-         */
-        FeedListContract.View getView();
     }
 
 
