@@ -3,7 +3,7 @@ package ahmed.news.feed_item_details;
 import javax.inject.Inject;
 
 import ahmed.news.entity.FeedItem;
-import ahmed.news.feed_list.FeedListContract;
+import timber.log.Timber;
 
 /**
  * presents the details of a single feed item
@@ -31,6 +31,8 @@ public class FeedItemDetailsPresenter implements FeedItemDetailsContract.Present
     {
         if (mView != null)
         {
+            Timber.d("null feeditem %b", (mFeedItem == null));
+
             if (mFeedItem.getTitle() != null)
                 mView.showTitle(mFeedItem.getTitle());
             if (mFeedItem.getDescription() != null)

@@ -7,14 +7,17 @@ import org.simpleframework.xml.ElementList;
 import org.simpleframework.xml.Namespace;
 import org.simpleframework.xml.Root;
 
+import java.io.Serializable;
 import java.util.List;
+
+import javax.inject.Inject;
 
 /**
  * A feed item represents one story
  * Created by ahmed on 9/20/2016.
  */
 @Root(strict = false, name = "item")
-public class FeedItem
+public class FeedItem implements Serializable
 {
     @Element(name = "pubDate")
     private String pubDate;

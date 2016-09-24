@@ -14,21 +14,6 @@ import dagger.Provides;
 @Module
 public class AppModule
 {
-    @Provides
-    public FeedRemoteDataSource provideFeedRemoteDataSource()
-    {
-        return new FeedRemoteDataSource();
-    }
 
-    @Provides
-    public FeedListContract.Presenter provideFeedListPresenter(FeedRemoteDataSource feedRemoteDataSource)
-    {
-        return new FeedListPresenter(feedRemoteDataSource);
-    }
 
-    @Provides
-    public FeedItemDetailsContract.Presenter provideFeedItemDetailsPresenter()
-    {
-        return new FeedItemDetailsPresenter();
-    }
 }

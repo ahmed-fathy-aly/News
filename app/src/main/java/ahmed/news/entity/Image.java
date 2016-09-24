@@ -4,11 +4,13 @@ import org.simpleframework.xml.Attribute;
 import org.simpleframework.xml.Namespace;
 import org.simpleframework.xml.Root;
 
+import java.io.Serializable;
+
 /**
  * Created by ahmed on 9/20/2016.
  */
 @Root( strict = false)
-public class Image
+public class Image implements Serializable
 {
     @Attribute(name = "width")
     private int width;
