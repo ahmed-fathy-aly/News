@@ -3,34 +3,22 @@ package ahmed.news.feed_item_details;
 import android.content.Intent;
 import android.support.annotation.Nullable;
 import android.support.test.InstrumentationRegistry;
-import android.support.test.espresso.contrib.RecyclerViewActions;
 import android.support.test.rule.ActivityTestRule;
 
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 
-import java.io.IOException;
-import java.net.URLDecoder;
-
 import ahmed.news.App;
 import ahmed.news.AppComponent;
 import ahmed.news.AppModule;
-import ahmed.news.R;
-import ahmed.news.data.FeedRemoteDataSource;
-import ahmed.news.entity.Channel;
+import ahmed.news.data.FeedRemoteDataSourceImp;
 import ahmed.news.entity.FeedItem;
 import ahmed.news.entity.Image;
-import ahmed.news.entity.RSSFeed;
-import ahmed.news.feed_list.DaggerFeedListActivityTest_TestComponent;
-import ahmed.news.feed_list.FeedAdapterViewHolderMatcher;
-import ahmed.news.feed_list.FeedListActivity;
 import ahmed.news.feed_list.FeedListContract;
-import ahmed.news.feed_list.FeedListPresenter;
 import dagger.Component;
 import dagger.Module;
 import dagger.Provides;
-import timber.log.Timber;
 
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.click;
@@ -39,8 +27,6 @@ import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
 import static android.support.test.espresso.action.ViewActions.scrollTo;
-
-import static org.junit.Assert.*;
 
 /**
  * tests the feed item details UI and mocks the presenter
@@ -106,13 +92,13 @@ public class FeedItemDetailsActivityTest
     class TestModule extends AppModule
     {
         @Provides
-        public FeedRemoteDataSource provideFeedRemoteDataSource()
+        public FeedRemoteDataSourceImp provideFeedRemoteDataSource()
         {
            return null;
         }
 
         @Provides
-        public FeedListContract.Presenter provideFeedListPresenter(@Nullable FeedRemoteDataSource feedRemoteDataSource)
+        public FeedListContract.Presenter provideFeedListPresenter(@Nullable FeedRemoteDataSourceImp feedRemoteDataSource)
         {
             return null;
         }

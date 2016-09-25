@@ -1,7 +1,6 @@
 package ahmed.news;
 
 import android.content.ComponentName;
-import android.support.annotation.Nullable;
 import android.support.test.InstrumentationRegistry;
 import android.support.test.espresso.contrib.RecyclerViewActions;
 import android.support.test.espresso.intent.Intents;
@@ -16,12 +15,12 @@ import java.util.Arrays;
 import java.util.List;
 
 import ahmed.news.data.FeedRemoteDataSource;
+import ahmed.news.data.FeedRemoteDataSourceImp;
 import ahmed.news.entity.Channel;
 import ahmed.news.entity.FeedItem;
 import ahmed.news.entity.Image;
 import ahmed.news.entity.RSSFeed;
 import ahmed.news.feed_item_details.FeedItemDetailsActivity;
-import ahmed.news.feed_list.DaggerFeedListActivityTest_TestComponent;
 import ahmed.news.feed_list.FeedAdapterViewHolderMatcher;
 import ahmed.news.feed_list.FeedListActivity;
 import ahmed.news.feed_list.FeedListContract;

@@ -1,7 +1,7 @@
 package ahmed.news.feed_list;
 
 import ahmed.news.data.FeedRemoteDataSource;
-import ahmed.news.entity.FeedItem;
+import ahmed.news.data.FeedRemoteDataSourceImp;
 import dagger.Module;
 import dagger.Provides;
 
@@ -14,7 +14,7 @@ public class FeedListModule
     @Provides
     public FeedRemoteDataSource provideFeedRemoteDataSource()
     {
-        return new FeedRemoteDataSource();
+        return new FeedRemoteDataSourceImp();
     }
 
     @Provides

@@ -16,6 +16,7 @@ import ahmed.news.App;
 import ahmed.news.AppComponent;
 import ahmed.news.R;
 import ahmed.news.data.FeedRemoteDataSource;
+import ahmed.news.data.FeedRemoteDataSourceImp;
 import ahmed.news.entity.FeedItem;
 import dagger.Component;
 import dagger.Module;

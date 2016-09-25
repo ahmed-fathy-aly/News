@@ -17,12 +17,12 @@ import static org.junit.Assert.assertTrue;
 public class FeedRemoteDataSourceTest
 {
 
-    private FeedRemoteDataSource feedRemoteDataSource;
+    private FeedRemoteDataSourceImp feedRemoteDataSource;
 
     @Before
     public void setup()
     {
-        feedRemoteDataSource = new FeedRemoteDataSource();
+        feedRemoteDataSource = new FeedRemoteDataSourceImp();
     }
 
     @Test

@@ -7,6 +7,7 @@ import java.util.List;
 import javax.inject.Inject;
 
 import ahmed.news.data.FeedRemoteDataSource;
+import ahmed.news.data.FeedRemoteDataSourceImp;
 import ahmed.news.entity.FeedItem;
 import ahmed.news.entity.RSSFeed;
 import rx.Observable;
