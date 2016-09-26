@@ -21,6 +21,8 @@ import ahmed.news.entity.FeedItem;
 import ahmed.news.entity.Image;
 import ahmed.news.entity.RSSFeed;
 import ahmed.news.feed_item_details.FeedItemDetailsActivity;
+import ahmed.news.feed_item_details.FeedItemDetailsContract;
+import ahmed.news.feed_item_details.FeedItemDetailsPresenter;
 import ahmed.news.feed_list.FeedAdapterViewHolderMatcher;
 import ahmed.news.feed_list.FeedListActivity;
 import ahmed.news.feed_list.FeedListContract;
@@ -126,6 +128,12 @@ public class IntegrationTest
         public FeedListContract.Presenter provideFeedListPresenter(FeedRemoteDataSource feedRemoteDataSource)
         {
             return new FeedListPresenter(feedRemoteDataSource);
+        }
+
+        @Provides
+        public FeedItemDetailsContract.Presenter provideFeedItemDetailsPreseneter()
+        {
+           return new FeedItemDetailsPresenter();
         }
 
     }

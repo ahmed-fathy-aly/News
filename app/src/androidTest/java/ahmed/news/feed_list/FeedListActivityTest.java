@@ -18,6 +18,8 @@ import ahmed.news.R;
 import ahmed.news.data.FeedRemoteDataSource;
 import ahmed.news.data.FeedRemoteDataSourceImp;
 import ahmed.news.entity.FeedItem;
+import ahmed.news.feed_item_details.FeedItemDetailsContract;
+import ahmed.news.feed_item_details.FeedItemDetailsPresenter;
 import dagger.Component;
 import dagger.Module;
 import dagger.Provides;
@@ -87,6 +89,13 @@ public class FeedListActivityTest
             return new MockPresenter();
         }
 
+        @Provides
+        public FeedItemDetailsContract.Presenter provideFeedItemDetailsPreseneter()
+        {
+            return new FeedItemDetailsPresenter()
+            {
+            };
+        }
     }
 
 

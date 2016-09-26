@@ -10,7 +10,7 @@ import dagger.Provides;
 public class FeedItemDetailsModule
 {
     @Provides
-    public FeedItemDetailsPresenter provideFeedItemDetailsPreseneter()
+    public FeedItemDetailsContract.Presenter provideFeedItemDetailsPreseneter()
     {
         return new FeedItemDetailsPresenter();
     }

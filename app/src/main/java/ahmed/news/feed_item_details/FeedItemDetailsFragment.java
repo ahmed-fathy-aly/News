@@ -46,7 +46,7 @@ public class FeedItemDetailsFragment extends Fragment implements FeedItemDetails
 
     /* fields */
     @Inject
-    FeedItemDetailsPresenter mPresenter;
+    FeedItemDetailsContract.Presenter mPresenter;
 
     /**
      * only use this to instantiate this fragment

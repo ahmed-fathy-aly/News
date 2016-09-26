@@ -12,6 +12,7 @@ import org.junit.Test;
 import ahmed.news.App;
 import ahmed.news.AppComponent;
 import ahmed.news.AppModule;
+import ahmed.news.data.FeedRemoteDataSource;
 import ahmed.news.data.FeedRemoteDataSourceImp;
 import ahmed.news.entity.FeedItem;
 import ahmed.news.entity.Image;
@@ -22,11 +23,10 @@ import dagger.Provides;
 
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.click;
+import static android.support.test.espresso.action.ViewActions.scrollTo;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
 import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
-import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
-import static android.support.test.espresso.action.ViewActions.scrollTo;
 
 /**
  * tests the feed item details UI and mocks the presenter
@@ -89,22 +89,22 @@ public class FeedItemDetailsActivityTest
      * provides a mock presenter
      */
     @Module
-    class TestModule extends AppModule
+    class TestModule
     {
         @Provides
-        public FeedRemoteDataSourceImp provideFeedRemoteDataSource()
+        public FeedRemoteDataSource provideFeedRemoteDataSource()
         {
            return null;
         }
 
         @Provides
-        public FeedListContract.Presenter provideFeedListPresenter(@Nullable FeedRemoteDataSourceImp feedRemoteDataSource)
+        public FeedListContract.Presenter provideFeedListPresenter(@Nullable FeedRemoteDataSource feedRemoteDataSource)
         {
             return null;
         }
 
         @Provides
-        public FeedItemDetailsPresenter provideFeedItemDetailsPreseneter()
+        public FeedItemDetailsContract.Presenter provideFeedItemDetailsPreseneter()
         {
             return new FeedItemDetailsPresenter()
             {
