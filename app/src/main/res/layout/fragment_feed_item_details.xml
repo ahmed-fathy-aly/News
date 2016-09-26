@@ -17,11 +17,11 @@
             android:textColor="@color/primary_text"
             android:textSize="24sp"/>
 
-        <ImageView
+        <ahmed.news.UI.FixedWidthImageView
             android:id="@+id/image_view_media"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:scaleType="fitCenter"/>
+            />
 
         <TextView
             android:id="@+id/text_view_date"
