@@ -51,6 +51,15 @@ public class FeedItem implements Serializable
         this.pubDate = pubData;
     }
 
+    public FeedItem(String pubDate, String title, String description, String link, Image image)
+    {
+        this.pubDate = pubDate;
+        this.title = title;
+        this.description = description;
+        this.link = link;
+        this.image = image;
+    }
+
     @Nullable
     public Image getImage()
     {

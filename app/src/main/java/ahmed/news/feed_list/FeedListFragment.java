@@ -1,6 +1,7 @@
 package ahmed.news.feed_list;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
@@ -13,13 +14,18 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+
 import java.util.List;
 
 import javax.inject.Inject;
 
 import ahmed.news.App;
 import ahmed.news.R;
+import ahmed.news.data.SyncFeedService;
 import ahmed.news.entity.FeedItem;
+import ahmed.news.event.FeedUpdatedEvent;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import timber.log.Timber;
@@ -80,6 +86,7 @@ public class FeedListFragment extends Fragment implements FeedListContract.View,
         App app = (App) getActivity().getApplication();
         app.getComponent().inject(FeedListFragment.this);
         mPresenter.registerView(FeedListFragment.this);
+        EventBus.getDefault().register(this);
 
         // setup swipe to refresh
         mSwipeRefresh.setOnRefreshListener(this);
@@ -100,6 +107,7 @@ public class FeedListFragment extends Fragment implements FeedListContract.View,
         super.onDestroyView();
         ButterKnife.unbind(this);
         mPresenter.unregisterView();
+        EventBus.getDefault().unregister(this);
     }
 
     @Override
@@ -189,6 +197,12 @@ public class FeedListFragment extends Fragment implements FeedListContract.View,
     }
 
     @Override
+    public void launchSyncService()
+    {
+        getActivity().startService(new Intent(getContext(), SyncFeedService.class));
+    }
+
+    @Override
     public void onRefresh()
     {
         mPresenter.syncFeed();
@@ -204,5 +218,11 @@ public class FeedListFragment extends Fragment implements FeedListContract.View,
     public interface OnFragmentInteractionListener
     {
         void onFeedItemClicked(FeedItem feedItem, View view);
+    }
+
+    @Subscribe
+    public void onEvent(FeedUpdatedEvent feedUpdatedEvent)
+    {
+        mPresenter.getFeed();
     }
 }

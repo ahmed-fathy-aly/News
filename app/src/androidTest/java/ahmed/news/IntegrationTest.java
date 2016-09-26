@@ -1,6 +1,7 @@
 package ahmed.news;
 
 import android.content.ComponentName;
+import android.content.Context;
 import android.support.test.InstrumentationRegistry;
 import android.support.test.espresso.contrib.RecyclerViewActions;
 import android.support.test.espresso.intent.Intents;
@@ -14,6 +15,8 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 
+import ahmed.news.data.FeedLocalDataSource;
+import ahmed.news.data.FeedLocalDataSourceImp;
 import ahmed.news.data.FeedRemoteDataSource;
 import ahmed.news.entity.Channel;
 import ahmed.news.entity.FeedItem;
@@ -85,6 +88,7 @@ public class IntegrationTest
         app.setComponent(
                 DaggerAppComponent
                         .builder()
+                        .appModule(new AppModule(InstrumentationRegistry.getTargetContext()))
                         .feedListModule(new TestModule())
                         .build());
     }
@@ -96,14 +100,20 @@ public class IntegrationTest
     class TestModule extends FeedListModule
     {
         @Override
-        public FeedRemoteDataSource provideFeedRemoteDataSource()
+        public FeedLocalDataSource provideFeedLocalDataSource(Context context)
         {
-            return new FeedRemoteDataSource()
+            return new FeedLocalDataSource()
             {
                 @Override
-                public RSSFeed getFeed() throws IOException
+                public RSSFeed getFeed()
                 {
                     return new RSSFeed(new Channel("my channel", FEED_LIST));
+                }
+
+                @Override
+                public void storeFeed(RSSFeed newFeed)
+                {
+
                 }
             };
         }

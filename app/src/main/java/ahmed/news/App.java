@@ -24,7 +24,10 @@ public class App extends Application
     public AppComponent getComponent()
     {
         if (mComponent == null)
-            mComponent = DaggerAppComponent.builder().build();
+            mComponent = DaggerAppComponent
+                    .builder()
+                    .appModule(new AppModule(getApplicationContext()))
+                    .build();
         return mComponent;
     }
 

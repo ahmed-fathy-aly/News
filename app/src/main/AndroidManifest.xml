@@ -20,6 +20,11 @@
         </activity>
         <activity android:name=".feed_item_details.FeedItemDetailsActivity">
         </activity>
+
+        <service
+            android:name=".data.SyncFeedService"
+            android:exported="false">
+        </service>
     </application>
 
 </manifest>

@@ -2,6 +2,7 @@ package ahmed.news;
 
 import javax.inject.Scope;
 
+import ahmed.news.data.SyncFeedService;
 import ahmed.news.feed_item_details.FeedItemDetailsFragment;
 import ahmed.news.feed_item_details.FeedItemDetailsModule;
 import ahmed.news.feed_list.FeedListContract;
@@ -18,4 +19,5 @@ public interface AppComponent
     void inject(FeedListContract.Presenter presenter);
     void inject(FeedListFragment fragment);
     void inject(FeedItemDetailsFragment fragment);
+    void inject(SyncFeedService syncFeedService);
 }

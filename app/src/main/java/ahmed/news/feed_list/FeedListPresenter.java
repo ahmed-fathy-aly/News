@@ -1,14 +1,8 @@
 package ahmed.news.feed_list;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-
 import javax.inject.Inject;
 
-import ahmed.news.data.FeedRemoteDataSource;
-import ahmed.news.data.FeedRemoteDataSourceImp;
-import ahmed.news.entity.FeedItem;
+import ahmed.news.data.FeedLocalDataSource;
 import ahmed.news.entity.RSSFeed;
 import rx.Observable;
 import rx.Observer;
@@ -22,13 +16,12 @@ public class FeedListPresenter implements FeedListContract.Presenter
 {
 
     private FeedListContract.View mView;
-    private FeedRemoteDataSource mFeedRemoteDataSource;
-
+    private FeedLocalDataSource mFeedLocalDataSource;
 
     @Inject
-    public FeedListPresenter(FeedRemoteDataSource feedRemoteDataSource)
+    public FeedListPresenter(FeedLocalDataSource feedLocalDataSource)
     {
-        mFeedRemoteDataSource = feedRemoteDataSource;
+        mFeedLocalDataSource = feedLocalDataSource;
     }
 
     @Override
@@ -41,13 +34,8 @@ public class FeedListPresenter implements FeedListContract.Presenter
         // fetch data from API synchronously
         Observable
                 .defer(() -> {
-                    try
-                    {
-                        return rx.Observable.just(mFeedRemoteDataSource.getFeed());
-                    } catch (IOException e)
-                    {
-                        return rx.Observable.error(e);
-                    }
+                        return rx.Observable.just(mFeedLocalDataSource.getFeed());
+
                 })
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -75,9 +63,14 @@ public class FeedListPresenter implements FeedListContract.Presenter
                     {
                         if (mView != null)
                         {
-                            List<FeedItem> feedList = rssFeed.getChannel().getFeedItemList();
-                            mView.showFeedList(feedList != null ? feedList : new ArrayList<FeedItem>());
-                            mView.showTitle(rssFeed.getChannel().getTitle());
+                            if (rssFeed == null || rssFeed.getChannel() == null
+                                    || rssFeed.getChannel().getFeedItemList() == null)
+                                syncFeed();
+                            else
+                            {
+                                mView.showFeedList(rssFeed.getChannel().getFeedItemList());
+                                mView.showTitle(rssFeed.getChannel().getTitle());
+                            }
                         }
                     }
                 });
@@ -86,7 +79,8 @@ public class FeedListPresenter implements FeedListContract.Presenter
     @Override
     public void syncFeed()
     {
-        getFeed();
+        if (mView != null)
+            mView.launchSyncService();
     }
 
     @Override

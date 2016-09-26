@@ -13,8 +13,10 @@ import java.util.Arrays;
 import java.util.List;
 
 import ahmed.news.App;
+import ahmed.news.AppModule;
 import ahmed.news.DaggerAppComponent;
 import ahmed.news.R;
+import ahmed.news.data.FeedLocalDataSource;
 import ahmed.news.data.FeedRemoteDataSource;
 import ahmed.news.entity.FeedItem;
 
@@ -52,6 +54,7 @@ public class FeedListActivityTest
         app.setComponent(
                 DaggerAppComponent
                         .builder()
+                        .appModule(new AppModule(InstrumentationRegistry.getTargetContext()))
                         .feedListModule(new TestModule())
                         .build());
     }
@@ -62,7 +65,7 @@ public class FeedListActivityTest
     class TestModule extends FeedListModule
     {
         @Override
-        public FeedListContract.Presenter provideFeedListPresenter(@Nullable FeedRemoteDataSource feedRemoteDataSource)
+        public FeedListContract.Presenter provideFeedListPresenter(@Nullable FeedLocalDataSource feedLocalDataSource)
         {
             return new MockPresenter();
         }

@@ -37,22 +37,29 @@ public class FeedListContract
          * shows the title of the channel
          */
         void showTitle(String title);
+
+        /**
+         * starts the component that will update the local database from the internet
+         */
+        void launchSyncService();
+
     }
 
     public interface Presenter
     {
         /**
          * fetches and displays the feed(fixed RSS source)
-         * now, it grabs the feed from the internet everytime
+         * reads from uses the local storage
+         * if there are no feed items stored, it will ask the view to launcht the sync service
          * - asks the view to show progress
-         * - downloads the feedlist and asks the view to show it
+         * - reads the feedlist and asks the view to show it(or launch the sync service if it's not there)
          * - asks the view to hide progress
          */
         void getFeed();
 
         /**
-         * asks the presenter to sync the feed then present it
-         * now, it just relies on getFeed()
+         * asks the presenter to sync the feed
+         * the presenter just asks the view to launch the sync service
          */
         void syncFeed();
 

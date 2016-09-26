@@ -18,6 +18,7 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 
+import ahmed.news.data.FeedLocalDataSource;
 import ahmed.news.data.FeedRemoteDataSource;
 import ahmed.news.data.FeedRemoteDataSourceImp;
 import ahmed.news.entity.Channel;
@@ -42,7 +43,7 @@ public class FeedListPresenterTest
     private FeedListContract.View mView;
 
     @Mock
-    private FeedRemoteDataSource mFeedRemoteDataSource;
+    private FeedLocalDataSource mFeedLocalDataSource;
 
     @InjectMocks
     private FeedListPresenter mPresenter;
@@ -93,7 +94,7 @@ public class FeedListPresenterTest
         Channel channel = new Channel(channelName, feedList);
         RSSFeed rssFeed = new RSSFeed(channel);
         long requestDelayInMillis = 600;
-        when(mFeedRemoteDataSource.getFeed()).then(new Answer<RSSFeed>()
+        when(mFeedLocalDataSource.getFeed()).then(new Answer<RSSFeed>()
         {
             @Override
             public RSSFeed answer(InvocationOnMock invocation) throws Throwable
@@ -111,20 +112,18 @@ public class FeedListPresenterTest
     }
 
     /**
-     * the feed data source is mocked to throw an IOException
+     * the feed data source is mocked to return null, so presenter should ask the view to launch the sync service
      */
     @Test
     public void testGetFeedFailed() throws Exception
     {
         // create dummy feed data
-        String errorMessage = "You trusted me, and I failed you";
-        when(mFeedRemoteDataSource.getFeed()).thenThrow(new IOException(errorMessage));
-
+        when(mFeedLocalDataSource.getFeed()).thenReturn(null);
 
         // ask the presenter to get the feed and check the view
         mPresenter.getFeed();
         verify(mView).showProgress();
-        verify(mView, timeout(3000)).showError(errorMessage);
+        verify(mView, timeout(300)).launchSyncService();
         verify(mView).hideProgress();
     }
 

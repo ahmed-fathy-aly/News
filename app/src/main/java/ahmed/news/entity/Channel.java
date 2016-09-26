@@ -32,6 +32,13 @@ public class Channel
         this.feedItemList = feedList;
     }
 
+    public Channel(String title, String descrpition, List<FeedItem> feedItems)
+    {
+        this.title =title;
+        this.description = descrpition;
+        this.feedItemList = feedItems;
+    }
+
     public List<FeedItem> getFeedItemList()
     {
         return feedItemList;

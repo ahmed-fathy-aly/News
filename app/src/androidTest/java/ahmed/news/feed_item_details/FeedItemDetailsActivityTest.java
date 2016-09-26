@@ -9,6 +9,7 @@ import org.junit.Rule;
 import org.junit.Test;
 
 import ahmed.news.App;
+import ahmed.news.AppModule;
 import ahmed.news.DaggerAppComponent;
 import ahmed.news.entity.FeedItem;
 import ahmed.news.entity.Image;
@@ -63,6 +64,7 @@ public class FeedItemDetailsActivityTest
         app.setComponent(
                 DaggerAppComponent
                         .builder()
+                        .appModule(new AppModule(InstrumentationRegistry.getTargetContext()))
                         .feedItemDetailsModule(new TestModule())
                         .build()
         );
