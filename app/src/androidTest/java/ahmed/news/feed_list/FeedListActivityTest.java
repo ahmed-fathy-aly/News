@@ -13,16 +13,10 @@ import java.util.Arrays;
 import java.util.List;
 
 import ahmed.news.App;
-import ahmed.news.AppComponent;
+import ahmed.news.DaggerAppComponent;
 import ahmed.news.R;
 import ahmed.news.data.FeedRemoteDataSource;
-import ahmed.news.data.FeedRemoteDataSourceImp;
 import ahmed.news.entity.FeedItem;
-import ahmed.news.feed_item_details.FeedItemDetailsContract;
-import ahmed.news.feed_item_details.FeedItemDetailsPresenter;
-import dagger.Component;
-import dagger.Module;
-import dagger.Provides;
 
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
@@ -56,45 +50,21 @@ public class FeedListActivityTest
         App app = (App) InstrumentationRegistry.getInstrumentation()
                 .getTargetContext().getApplicationContext();
         app.setComponent(
-                DaggerFeedListActivityTest_TestComponent
+                DaggerAppComponent
                         .builder()
-                        .testModule(new TestModule())
+                        .feedListModule(new TestModule())
                         .build());
-    }
-
-    /**
-     * uses the test module instead of the AppModule
-     */
-    @Component(modules = {TestModule.class})
-    interface TestComponent extends AppComponent
-    {
     }
 
     /**
      * provides a mock presenter
      */
-    @Module
-    class TestModule
+    class TestModule extends FeedListModule
     {
-        @Provides
-        @Nullable
-        public FeedRemoteDataSource provideFeedRemoteDataSource()
-        {
-            return null;
-        }
-
-        @Provides
+        @Override
         public FeedListContract.Presenter provideFeedListPresenter(@Nullable FeedRemoteDataSource feedRemoteDataSource)
         {
             return new MockPresenter();
-        }
-
-        @Provides
-        public FeedItemDetailsContract.Presenter provideFeedItemDetailsPreseneter()
-        {
-            return new FeedItemDetailsPresenter()
-            {
-            };
         }
     }
 

@@ -15,32 +15,24 @@ import java.util.Arrays;
 import java.util.List;
 
 import ahmed.news.data.FeedRemoteDataSource;
-import ahmed.news.data.FeedRemoteDataSourceImp;
 import ahmed.news.entity.Channel;
 import ahmed.news.entity.FeedItem;
 import ahmed.news.entity.Image;
 import ahmed.news.entity.RSSFeed;
 import ahmed.news.feed_item_details.FeedItemDetailsActivity;
-import ahmed.news.feed_item_details.FeedItemDetailsContract;
-import ahmed.news.feed_item_details.FeedItemDetailsPresenter;
 import ahmed.news.feed_list.FeedAdapterViewHolderMatcher;
 import ahmed.news.feed_list.FeedListActivity;
-import ahmed.news.feed_list.FeedListContract;
-import ahmed.news.feed_list.FeedListPresenter;
-import dagger.Component;
-import dagger.Module;
-import dagger.Provides;
+import ahmed.news.feed_list.FeedListModule;
 
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.Espresso.pressBack;
 import static android.support.test.espresso.action.ViewActions.click;
-
 import static android.support.test.espresso.action.ViewActions.scrollTo;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
-import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
-import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static android.support.test.espresso.intent.Intents.intended;
 import static android.support.test.espresso.intent.matcher.IntentMatchers.hasComponent;
+import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
+import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
 
 /**
@@ -91,27 +83,19 @@ public class IntegrationTest
         App app = (App) InstrumentationRegistry.getInstrumentation()
                 .getTargetContext().getApplicationContext();
         app.setComponent(
-                DaggerIntegrationTest_TestComponent
+                DaggerAppComponent
                         .builder()
-                        .testModule(new TestModule())
+                        .feedListModule(new TestModule())
                         .build());
     }
 
-    /**
-     * uses the test module instead of the AppModule
-     */
-    @Component(modules = {TestModule.class})
-    interface TestComponent extends AppComponent
-    {
-    }
 
     /**
      * provides a mock feed data source
      */
-    @Module
-    class TestModule
+    class TestModule extends FeedListModule
     {
-        @Provides
+        @Override
         public FeedRemoteDataSource provideFeedRemoteDataSource()
         {
             return new FeedRemoteDataSource()
@@ -124,20 +108,7 @@ public class IntegrationTest
             };
         }
 
-        @Provides
-        public FeedListContract.Presenter provideFeedListPresenter(FeedRemoteDataSource feedRemoteDataSource)
-        {
-            return new FeedListPresenter(feedRemoteDataSource);
-        }
-
-        @Provides
-        public FeedItemDetailsContract.Presenter provideFeedItemDetailsPreseneter()
-        {
-           return new FeedItemDetailsPresenter();
-        }
-
     }
-
 
     /**
      * open the list of feed

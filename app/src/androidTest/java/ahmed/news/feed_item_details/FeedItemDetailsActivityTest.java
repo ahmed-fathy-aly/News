@@ -1,7 +1,6 @@
 package ahmed.news.feed_item_details;
 
 import android.content.Intent;
-import android.support.annotation.Nullable;
 import android.support.test.InstrumentationRegistry;
 import android.support.test.rule.ActivityTestRule;
 
@@ -10,16 +9,9 @@ import org.junit.Rule;
 import org.junit.Test;
 
 import ahmed.news.App;
-import ahmed.news.AppComponent;
-import ahmed.news.AppModule;
-import ahmed.news.data.FeedRemoteDataSource;
-import ahmed.news.data.FeedRemoteDataSourceImp;
+import ahmed.news.DaggerAppComponent;
 import ahmed.news.entity.FeedItem;
 import ahmed.news.entity.Image;
-import ahmed.news.feed_list.FeedListContract;
-import dagger.Component;
-import dagger.Module;
-import dagger.Provides;
 
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.click;
@@ -69,41 +61,20 @@ public class FeedItemDetailsActivityTest
                 .getTargetContext().getApplicationContext();
 
         app.setComponent(
-                DaggerFeedItemDetailsActivityTest_TestComponent
+                DaggerAppComponent
                         .builder()
-                        .testModule(new TestModule())
+                        .feedItemDetailsModule(new TestModule())
                         .build()
         );
 
     }
 
     /**
-     * uses the test module instead of the AppModule
-     */
-    @Component(modules = {TestModule.class})
-    interface TestComponent extends AppComponent
-    {
-    }
-
-    /**
      * provides a mock presenter
      */
-    @Module
-    class TestModule
+    class TestModule extends FeedItemDetailsModule
     {
-        @Provides
-        public FeedRemoteDataSource provideFeedRemoteDataSource()
-        {
-           return null;
-        }
-
-        @Provides
-        public FeedListContract.Presenter provideFeedListPresenter(@Nullable FeedRemoteDataSource feedRemoteDataSource)
-        {
-            return null;
-        }
-
-        @Provides
+        @Override
         public FeedItemDetailsContract.Presenter provideFeedItemDetailsPreseneter()
         {
             return new FeedItemDetailsPresenter()
@@ -125,7 +96,6 @@ public class FeedItemDetailsActivityTest
                 }
             };
         }
-
     }
 
     /**
