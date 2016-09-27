@@ -2,6 +2,11 @@ package ahmed.news;
 
 import android.app.Application;
 
+import com.google.android.gms.gcm.GcmNetworkManager;
+import com.google.android.gms.gcm.PeriodicTask;
+
+import ahmed.news.data.SyncFeedService;
+import ahmed.news.data.SyncTaskScheduler;
 import timber.log.Timber;
 
 /**
@@ -16,6 +21,7 @@ public class App extends Application
     {
         super.onCreate();
         Timber.plant(new Timber.DebugTree());
+        SyncTaskScheduler.scheduleRepeatingSync(this);
     }
 
     /**

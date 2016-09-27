@@ -24,6 +24,7 @@ import javax.inject.Inject;
 import ahmed.news.App;
 import ahmed.news.R;
 import ahmed.news.data.SyncFeedService;
+import ahmed.news.data.SyncTaskScheduler;
 import ahmed.news.entity.FeedItem;
 import ahmed.news.event.FeedUpdatedEvent;
 import butterknife.Bind;
@@ -199,7 +200,7 @@ public class FeedListFragment extends Fragment implements FeedListContract.View,
     @Override
     public void launchSyncService()
     {
-        getActivity().startService(new Intent(getContext(), SyncFeedService.class));
+        // TODO - make the presenter do the sync
     }
 
     @Override

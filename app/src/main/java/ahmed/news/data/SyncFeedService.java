@@ -3,6 +3,10 @@ package ahmed.news.data;
 import android.app.IntentService;
 import android.content.Intent;
 
+import com.google.android.gms.gcm.GcmNetworkManager;
+import com.google.android.gms.gcm.GcmTaskService;
+import com.google.android.gms.gcm.TaskParams;
+
 import org.greenrobot.eventbus.EventBus;
 
 import java.io.IOException;
@@ -25,40 +29,31 @@ import timber.log.Timber;
  * - updates the database
  * - notify any one who wants to hear about that
  */
-public class SyncFeedService extends IntentService
+public class SyncFeedService extends GcmTaskService
 {
     @Inject
     FeedRemoteDataSource feedRemoteDataSource;
     @Inject
     FeedLocalDataSource feedLocalDataSource;
 
-    public SyncFeedService()
-    {
-        super("SyncFeedService");
-    }
 
     @Override
-    protected void onHandleIntent(Intent intent)
+    public int onRunTask(TaskParams taskParams)
     {
+        Timber.d("running feed service %s", taskParams.getTag());
         // inject the feed sources and start updating
         App app = (App) getApplication();
         app.getComponent().inject(this);
 
-        syncFeed(feedRemoteDataSource, feedLocalDataSource);
-    }
-
-    public void syncFeed(FeedRemoteDataSource feedRemoteDataSource, FeedLocalDataSource feedLocalDataSource)
-    {
         // download the new data
         RSSFeed newFeed = null;
         try
         {
             newFeed = feedRemoteDataSource.getFeed();
-
         } catch (IOException e)
         {
             Timber.e("error downloading feed %s", e.getMessage());
-            return;
+            return GcmNetworkManager.RESULT_RESCHEDULE;
         }
 
         // update the local database
@@ -66,6 +61,9 @@ public class SyncFeedService extends IntentService
 
         // notify anyone listening
         EventBus.getDefault().post(new FeedUpdatedEvent());
+
+        Timber.d("finished syncing");
+        return GcmNetworkManager.RESULT_SUCCESS;
     }
 
 
