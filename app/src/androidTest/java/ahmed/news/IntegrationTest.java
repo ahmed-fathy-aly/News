@@ -11,13 +11,10 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 
-import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 
 import ahmed.news.data.FeedLocalDataSource;
-import ahmed.news.data.FeedLocalDataSourceImp;
-import ahmed.news.data.FeedRemoteDataSource;
 import ahmed.news.entity.Channel;
 import ahmed.news.entity.FeedItem;
 import ahmed.news.entity.Image;
@@ -25,7 +22,6 @@ import ahmed.news.entity.RSSFeed;
 import ahmed.news.feed_item_details.FeedItemDetailsActivity;
 import ahmed.news.feed_list.FeedAdapterViewHolderMatcher;
 import ahmed.news.feed_list.FeedListActivity;
-import ahmed.news.feed_list.FeedListModule;
 
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.Espresso.pressBack;
@@ -88,8 +84,7 @@ public class IntegrationTest
         app.setComponent(
                 DaggerAppComponent
                         .builder()
-                        .appModule(new AppModule(InstrumentationRegistry.getTargetContext()))
-                        .feedListModule(new TestModule())
+                        .appModule(new TestModule(InstrumentationRegistry.getTargetContext()))
                         .build());
     }
 
@@ -97,8 +92,13 @@ public class IntegrationTest
     /**
      * provides a mock feed data source
      */
-    class TestModule extends FeedListModule
+    class TestModule extends AppModule
     {
+        public TestModule(Context context)
+        {
+            super(context);
+        }
+
         @Override
         public FeedLocalDataSource provideFeedLocalDataSource(Context context)
         {

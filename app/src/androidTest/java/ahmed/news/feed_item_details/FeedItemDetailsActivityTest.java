@@ -1,5 +1,6 @@
 package ahmed.news.feed_item_details;
 
+import android.content.Context;
 import android.content.Intent;
 import android.support.test.InstrumentationRegistry;
 import android.support.test.rule.ActivityTestRule;
@@ -64,8 +65,7 @@ public class FeedItemDetailsActivityTest
         app.setComponent(
                 DaggerAppComponent
                         .builder()
-                        .appModule(new AppModule(InstrumentationRegistry.getTargetContext()))
-                        .feedItemDetailsModule(new TestModule())
+                        .appModule(new TestModule(InstrumentationRegistry.getTargetContext()))
                         .build()
         );
 
@@ -74,8 +74,13 @@ public class FeedItemDetailsActivityTest
     /**
      * provides a mock presenter
      */
-    class TestModule extends FeedItemDetailsModule
+    class TestModule extends AppModule
     {
+        public TestModule(Context context)
+        {
+            super(context);
+        }
+
         @Override
         public FeedItemDetailsContract.Presenter provideFeedItemDetailsPreseneter()
         {

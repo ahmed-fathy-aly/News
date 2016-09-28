@@ -1,5 +1,6 @@
 package ahmed.news.feed_list;
 
+import android.content.Context;
 import android.support.annotation.Nullable;
 import android.support.test.InstrumentationRegistry;
 import android.support.test.espresso.contrib.RecyclerViewActions;
@@ -54,16 +55,20 @@ public class FeedListActivityTest
         app.setComponent(
                 DaggerAppComponent
                         .builder()
-                        .appModule(new AppModule(InstrumentationRegistry.getTargetContext()))
-                        .feedListModule(new TestModule())
+                        .appModule(new TestModule(InstrumentationRegistry.getTargetContext()))
                         .build());
     }
 
     /**
      * provides a mock presenter
      */
-    class TestModule extends FeedListModule
+    class TestModule extends AppModule
     {
+        public TestModule(Context context)
+        {
+            super(context);
+        }
+
         @Override
         public FeedListContract.Presenter provideFeedListPresenter(@Nullable FeedLocalDataSource feedLocalDataSource)
         {
