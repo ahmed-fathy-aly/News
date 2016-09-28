@@ -2,6 +2,7 @@ package ahmed.news.feed_list;
 
 import javax.inject.Inject;
 
+import ahmed.news.data.FeedDataSync;
 import ahmed.news.data.FeedLocalDataSource;
 import ahmed.news.entity.RSSFeed;
 import rx.Observable;
@@ -17,11 +18,13 @@ public class FeedListPresenter implements FeedListContract.Presenter
 
     private FeedListContract.View mView;
     private FeedLocalDataSource mFeedLocalDataSource;
+    private FeedDataSync mFeedDataSync;
 
     @Inject
-    public FeedListPresenter(FeedLocalDataSource feedLocalDataSource)
+    public FeedListPresenter(FeedLocalDataSource feedLocalDataSource, FeedDataSync feedDataSync)
     {
         mFeedLocalDataSource = feedLocalDataSource;
+        mFeedDataSync = feedDataSync;
     }
 
     @Override
@@ -34,7 +37,7 @@ public class FeedListPresenter implements FeedListContract.Presenter
         // fetch data from API synchronously
         Observable
                 .defer(() -> {
-                        return rx.Observable.just(mFeedLocalDataSource.getFeed());
+                    return rx.Observable.just(mFeedLocalDataSource.getFeed());
 
                 })
                 .subscribeOn(Schedulers.io())
@@ -79,8 +82,51 @@ public class FeedListPresenter implements FeedListContract.Presenter
     @Override
     public void syncFeed()
     {
+        // show progress
         if (mView != null)
-            mView.launchSyncService();
+            mView.showProgress();
+
+        // sync the data
+        Observable
+                .defer(() -> {
+                    return rx.Observable.just(mFeedDataSync.sync());
+
+                })
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Observer<FeedDataSync.SyncResult>()
+                {
+                    @Override
+                    public void onCompleted()
+                    {
+                    }
+
+                    @Override
+                    public void onError(Throwable e)
+                    {
+                        if (mView != null)
+                        {
+                            mView.showError(e.getMessage());
+                            mView.hideProgress();
+                        }
+                    }
+
+                    @Override
+                    public void onNext(FeedDataSync.SyncResult syncResult)
+                    {
+                        if (syncResult.isSuccess())
+                            getFeed();
+                        else
+                        {
+                            if (mView != null)
+                            {
+                                mView.showError("Sync Failed");
+                                mView.hideProgress();
+                            }
+                        }
+                    }
+                });
+
     }
 
     @Override

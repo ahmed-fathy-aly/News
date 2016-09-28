@@ -2,6 +2,8 @@ package ahmed.news;
 
 import android.content.Context;
 
+import ahmed.news.data.FeedDataSync;
+import ahmed.news.data.FeedDataSyncImp;
 import ahmed.news.data.FeedLocalDataSource;
 import ahmed.news.data.FeedLocalDataSourceImp;
 import ahmed.news.data.FeedRemoteDataSource;
@@ -45,7 +47,6 @@ public class AppModule
         return new FeedRemoteDataSourceImp();
     }
 
-
     @Provides
     public FeedLocalDataSource provideFeedLocalDataSource(Context context)
     {
@@ -53,8 +54,14 @@ public class AppModule
     }
 
     @Provides
-    public FeedListContract.Presenter provideFeedListPresenter(FeedLocalDataSource feedLocalDataSource)
+    public FeedDataSync provideFeedDataSync(FeedRemoteDataSource feedRemoteDataSource, FeedLocalDataSource feedLocalDataSource)
     {
-        return new FeedListPresenter(feedLocalDataSource);
+        return new FeedDataSyncImp(feedRemoteDataSource, feedLocalDataSource);
+    }
+
+    @Provides
+    public FeedListContract.Presenter provideFeedListPresenter(FeedLocalDataSource feedLocalDataSource, FeedDataSync feedDataSync)
+    {
+        return new FeedListPresenter(feedLocalDataSource, feedDataSync);
     }
 }

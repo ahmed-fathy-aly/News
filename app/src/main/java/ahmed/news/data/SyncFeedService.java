@@ -32,37 +32,25 @@ import timber.log.Timber;
 public class SyncFeedService extends GcmTaskService
 {
     @Inject
-    FeedRemoteDataSource feedRemoteDataSource;
-    @Inject
-    FeedLocalDataSource feedLocalDataSource;
-
+    FeedDataSync mFeedDataSync;
 
     @Override
     public int onRunTask(TaskParams taskParams)
     {
         Timber.d("running feed service %s", taskParams.getTag());
+
         // inject the feed sources and start updating
         App app = (App) getApplication();
         app.getComponent().inject(this);
+        FeedDataSync.SyncResult syncResult = mFeedDataSync.sync();
+        Timber.d("sync status %b", syncResult.isSuccess());
 
-        // download the new data
-        RSSFeed newFeed = null;
-        try
-        {
-            newFeed = feedRemoteDataSource.getFeed();
-        } catch (IOException e)
-        {
-            Timber.e("error downloading feed %s", e.getMessage());
+        // if failed then the service should be rescheduled
+        if (!syncResult.isSuccess())
             return GcmNetworkManager.RESULT_RESCHEDULE;
-        }
 
-        // update the local database
-        feedLocalDataSource.storeFeed(newFeed);
-
-        // notify anyone listening
+        // if succeeded then notify any one listening for database updated
         EventBus.getDefault().post(new FeedUpdatedEvent());
-
-        Timber.d("finished syncing");
         return GcmNetworkManager.RESULT_SUCCESS;
     }
 

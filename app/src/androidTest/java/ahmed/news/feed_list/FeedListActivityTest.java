@@ -17,6 +17,7 @@ import ahmed.news.App;
 import ahmed.news.AppModule;
 import ahmed.news.DaggerAppComponent;
 import ahmed.news.R;
+import ahmed.news.data.FeedDataSync;
 import ahmed.news.data.FeedLocalDataSource;
 import ahmed.news.data.FeedRemoteDataSource;
 import ahmed.news.entity.FeedItem;
@@ -70,7 +71,7 @@ public class FeedListActivityTest
         }
 
         @Override
-        public FeedListContract.Presenter provideFeedListPresenter(@Nullable FeedLocalDataSource feedLocalDataSource)
+        public FeedListContract.Presenter provideFeedListPresenter(@Nullable FeedLocalDataSource feedLocalDataSource, FeedDataSync feedDataSync)
         {
             return new MockPresenter();
         }

@@ -111,20 +111,6 @@ public class FeedListPresenterTest
         verify(mView).hideProgress();
     }
 
-    /**
-     * the feed data source is mocked to return null, so presenter should ask the view to launch the sync service
-     */
-    @Test
-    public void testGetFeedFailed() throws Exception
-    {
-        // create dummy feed data
-        when(mFeedLocalDataSource.getFeed()).thenReturn(null);
 
-        // ask the presenter to get the feed and check the view
-        mPresenter.getFeed();
-        verify(mView).showProgress();
-        verify(mView, timeout(300)).launchSyncService();
-        verify(mView).hideProgress();
-    }
 
 }
