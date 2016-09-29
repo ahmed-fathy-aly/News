@@ -23,6 +23,7 @@ import javax.inject.Inject;
 
 import ahmed.news.App;
 import ahmed.news.R;
+import ahmed.news.UI.DividerItemDecoration;
 import ahmed.news.data.SyncFeedService;
 import ahmed.news.data.SyncTaskScheduler;
 import ahmed.news.entity.FeedItem;
@@ -96,6 +97,7 @@ public class FeedListFragment extends Fragment implements FeedListContract.View,
         mAdapterFeed = new FeedAdapter(getContext());
         mAdapterFeed.setListener(this);
         mRecyclerViewFeed.setLayoutManager(new LinearLayoutManager(getContext()));
+        mRecyclerViewFeed.addItemDecoration(new DividerItemDecoration(getContext(), DividerItemDecoration.VERTICAL_LIST));
         mRecyclerViewFeed.setAdapter(mAdapterFeed);
 
         mPresenter.getFeed();
