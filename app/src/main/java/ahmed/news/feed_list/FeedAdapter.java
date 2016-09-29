@@ -106,7 +106,7 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.FeedViewHolder
                     {
                         int position = getAdapterPosition();
                         FeedItem feedItem = mData.get(position);
-                        mListener.onItemClick(position, feedItem, itemView);
+                        mListener.onItemClick(position, feedItem, itemView, textViewTitle, imageViewThumbnial);
                     }
                 }
             });
@@ -119,6 +119,6 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.FeedViewHolder
         /**
          * called when an item in the list is clicked
          */
-        void onItemClick(int position, FeedItem feedItem, View view);
+        void onItemClick(int position, FeedItem feedItem, View view, TextView textViewTitle, ImageView imageViewThumbnail);
     }
 }

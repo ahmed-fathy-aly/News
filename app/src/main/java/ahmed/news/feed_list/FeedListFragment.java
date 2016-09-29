@@ -13,6 +13,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -147,10 +149,11 @@ public class FeedListFragment extends Fragment implements FeedListContract.View,
     }
 
     @Override
-    public void onItemClick(int position, FeedItem feedItem, View view)
+    public void onItemClick(int position, FeedItem feedItem, View view,
+                            TextView textViewTitle, ImageView imageViewThumbnail)
     {
         if (mListener != null)
-            mListener.onFeedItemClicked(feedItem, view);
+            mListener.onFeedItemClicked(feedItem, view, textViewTitle, imageViewThumbnail);
     }
 
     @Override
@@ -220,7 +223,8 @@ public class FeedListFragment extends Fragment implements FeedListContract.View,
      */
     public interface OnFragmentInteractionListener
     {
-        void onFeedItemClicked(FeedItem feedItem, View view);
+        void onFeedItemClicked(FeedItem feedItem, View view,
+                               TextView textViewTitle, ImageView imageViewThumbnail);
     }
 
     @Subscribe

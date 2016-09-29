@@ -3,4 +3,8 @@
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="transiation_feed_to_details"> transiation_feed_to_details</string>
+    <string name="transiation_feed_to_details_title">transiation_feed_to_details_title</string>
+    <string name="transiation_feed_to_details_image">transiation_feed_to_details_image</string>>
 </resources>
+

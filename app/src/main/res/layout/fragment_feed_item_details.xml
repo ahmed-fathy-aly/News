@@ -2,6 +2,7 @@
             xmlns:tools="http://schemas.android.com/tools"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:transitionName="@string/transiation_feed_to_details"
             tools:context="ahmed.news.feed_item_details.FeedItemDetailsFragment">
 
     <LinearLayout
@@ -15,12 +16,14 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textColor="@color/primary_text"
+            android:transitionName="@string/transiation_feed_to_details_title"
             android:textSize="24sp"/>
 
         <ahmed.news.UI.FixedWidthImageView
             android:id="@+id/image_view_media"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:transitionName="@string/transiation_feed_to_details_image"
             />
 
         <TextView
