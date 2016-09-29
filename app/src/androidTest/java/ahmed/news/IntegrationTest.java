@@ -2,6 +2,7 @@ package ahmed.news;
 
 import android.content.ComponentName;
 import android.content.Context;
+import android.graphics.Point;
 import android.support.test.InstrumentationRegistry;
 import android.support.test.espresso.contrib.RecyclerViewActions;
 import android.support.test.espresso.intent.Intents;
@@ -22,6 +23,7 @@ import ahmed.news.entity.RSSFeed;
 import ahmed.news.feed_item_details.FeedItemDetailsActivity;
 import ahmed.news.feed_list.FeedAdapterViewHolderMatcher;
 import ahmed.news.feed_list.FeedListActivity;
+import timber.log.Timber;
 
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.Espresso.pressBack;
@@ -146,33 +148,48 @@ public class IntegrationTest
 
         // click on our feed item
         onView(withId(R.id.recycler_view_feed))
-            .perform(RecyclerViewActions.actionOnItemAtPosition(0, click()));
+                .perform(RecyclerViewActions.actionOnItemAtPosition(0, click()));
 
-        // make sure we reached the details activity
-        intended(hasComponent(new ComponentName(InstrumentationRegistry.getTargetContext(), FeedItemDetailsActivity.class)));
+        // check if it's in two pane mode or not
+        boolean twoPane = activity.findViewById(R.id.details_fragment_container) != null;
 
-        // check the feed item's details are shown
-        onView(withText(TITLE))
-                .perform(scrollTo())
-                .check(matches(isDisplayed()));
-        onView(withText(DATE))
-                .perform(scrollTo())
-                .check(matches(isDisplayed()));
-        onView(withText(DESCRIPTION))
-                .perform(scrollTo())
-                .check(matches(isDisplayed()));
-        onView(withText(URL))
-                .perform(scrollTo())
-                .check(matches(isDisplayed()));
+        if (twoPane)
+        {
+            // check that the description and url for this item are displayed
+            onView(withText(DESCRIPTION))
+                    .perform(scrollTo())
+                    .check(matches(isDisplayed()));
+            onView(withText(URL))
+                    .perform(scrollTo())
+                    .check(matches(isDisplayed()));
+        } else
+        {
+            // make sure we reached the details activity if it's one pane
+            intended(hasComponent(new ComponentName(InstrumentationRegistry.getTargetContext(), FeedItemDetailsActivity.class)));
 
-        // go back and make sure we reached the feed list activity again
-        pressBack();
-        intended(hasComponent(new ComponentName(InstrumentationRegistry.getTargetContext(), FeedListActivity.class)));
+            // check the feed item's details are shown
+            onView(withText(TITLE))
+                    .perform(scrollTo())
+                    .check(matches(isDisplayed()));
+            onView(withText(DATE))
+                    .perform(scrollTo())
+                    .check(matches(isDisplayed()));
+            onView(withText(DESCRIPTION))
+                    .perform(scrollTo())
+                    .check(matches(isDisplayed()));
+            onView(withText(URL))
+                    .perform(scrollTo())
+                    .check(matches(isDisplayed()));
 
-        // check the feed items are displayed correctly
-        for (int i = 0; i < FEED_LIST.size(); i++)
-            onView(withId(R.id.recycler_view_feed))
-                    .perform(RecyclerViewActions.scrollToPosition(i))
-                    .check(matches(FeedAdapterViewHolderMatcher.atPosition(i, FEED_LIST.get(i))));
+            // go back and make sure we reached the feed list activity again
+            pressBack();
+            intended(hasComponent(new ComponentName(InstrumentationRegistry.getTargetContext(), FeedListActivity.class)));
+
+            // check the feed items are displayed correctly
+            for (int i = 0; i < FEED_LIST.size(); i++)
+                onView(withId(R.id.recycler_view_feed))
+                        .perform(RecyclerViewActions.scrollToPosition(i))
+                        .check(matches(FeedAdapterViewHolderMatcher.atPosition(i, FEED_LIST.get(i))));
+        }
     }
 }
