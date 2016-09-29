@@ -47,4 +47,10 @@ public class FeedItemDetailsActivity extends BaseActivity
         Timber.d("null feeditem %b", (mFeedItem== null));
         return FeedItemDetailsFragment.newInstance(mFeedItem);
     }
+
+    @Override
+    protected boolean showHome()
+    {
+        return true;
+    }
 }

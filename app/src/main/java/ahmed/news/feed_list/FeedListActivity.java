@@ -30,6 +30,12 @@ public class FeedListActivity extends BaseActivity implements FeedListFragment.O
         return FeedListFragment.newInstance();
     }
 
+    @Override
+    protected boolean showHome()
+    {
+        return false;
+    }
+
 
     /**
      * use this to get an intent that launches this activity

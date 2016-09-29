@@ -19,7 +19,11 @@
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
-        <activity android:name=".feed_item_details.FeedItemDetailsActivity">
+        <activity android:name=".feed_item_details.FeedItemDetailsActivity"
+            android:label="@string/details">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".feed_list.FeedListActivity" />
         </activity>
 
         <service
