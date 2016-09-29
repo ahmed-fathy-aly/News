@@ -171,9 +171,6 @@ public class IntegrationTest
             onView(withText(TITLE))
                     .perform(scrollTo())
                     .check(matches(isDisplayed()));
-            onView(withText(DATE))
-                    .perform(scrollTo())
-                    .check(matches(isDisplayed()));
             onView(withText(DESCRIPTION))
                     .perform(scrollTo())
                     .check(matches(isDisplayed()));

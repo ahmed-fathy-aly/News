@@ -11,6 +11,7 @@ import android.widget.TextView;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 import ahmed.news.R;
@@ -67,7 +68,15 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.FeedViewHolder
     {
         FeedItem feedItem = mData.get(position);
         holder.textViewTitle.setText(feedItem.getTitle());
-        holder.textViewTime.setText(feedItem.getPubDate());
+        Calendar calendar = feedItem.getCalendar();
+        if (calendar != null)
+        {
+            String dateStr = android.text.format.DateUtils.getRelativeDateTimeString(mContext,
+                    calendar.getTimeInMillis(), android.text.format.DateUtils.MINUTE_IN_MILLIS,
+                    android.text.format.DateUtils.WEEK_IN_MILLIS, android.text.format.DateUtils.FORMAT_SHOW_TIME)
+                    .toString();
+            holder.textViewTime.setText(dateStr);
+        }
         if (feedItem.getImage() != null && feedItem.getImage().getUrl().length() > 0)
             Picasso.with(mContext)
                     .load(feedItem.getImage().getUrl())

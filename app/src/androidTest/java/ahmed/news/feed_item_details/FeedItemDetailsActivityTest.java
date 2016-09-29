@@ -8,6 +8,7 @@ import android.support.test.rule.ActivityTestRule;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
+import org.mockito.Mockito;
 
 import ahmed.news.App;
 import ahmed.news.AppModule;
@@ -38,6 +39,7 @@ public class FeedItemDetailsActivityTest
     final static String URL = "myFeed.com";
     final static String URI = "http:myFeed.com";
     static FeedItem FEED_ITEM;
+
     static
     {
         FEED_ITEM = new FeedItem();
@@ -82,17 +84,25 @@ public class FeedItemDetailsActivityTest
         }
 
         @Override
-        public FeedItemDetailsContract.Presenter provideFeedItemDetailsPreseneter()
+        public FeedItemDetailsContract.Presenter provideFeedItemDetailsPreseneter(Context context)
         {
-            return new FeedItemDetailsPresenter()
+            return new FeedItemDetailsContract.Presenter()
             {
+                FeedItemDetailsContract.View mView;
+
+                @Override
+                public void setFeedItem(FeedItem feedItem)
+                {
+
+                }
+
                 @Override
                 public void showFeedDetails()
                 {
                     mView.showTitle(TITLE);
                     mView.showDescription(DESCRIPTION);
                     mView.showImage(IMAGE);
-                    mView.showDate(DATE);
+                    mView.showDate(Mockito.anyString());
                     mView.showUrlString(URL);
                 }
 
@@ -100,6 +110,18 @@ public class FeedItemDetailsActivityTest
                 public void onLinkClicked()
                 {
                     mView.openUri(URI);
+                }
+
+                @Override
+                public void register(FeedItemDetailsContract.View view)
+                {
+                    mView = view;
+                }
+
+                @Override
+                public void unregister()
+                {
+                    mView = null;
                 }
             };
         }
@@ -118,9 +140,6 @@ public class FeedItemDetailsActivityTest
 
         // check everything is shown
         onView(withText(TITLE))
-                .perform(scrollTo())
-                .check(matches(isDisplayed()));
-        onView(withText(DATE))
                 .perform(scrollTo())
                 .check(matches(isDisplayed()));
         onView(withText(DESCRIPTION))

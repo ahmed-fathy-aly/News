@@ -36,9 +36,9 @@ public class AppModule
     }
 
     @Provides
-    public FeedItemDetailsContract.Presenter provideFeedItemDetailsPreseneter()
+    public FeedItemDetailsContract.Presenter provideFeedItemDetailsPreseneter(Context context)
     {
-        return new FeedItemDetailsPresenter();
+        return new FeedItemDetailsPresenter(context);
     }
 
     @Provides

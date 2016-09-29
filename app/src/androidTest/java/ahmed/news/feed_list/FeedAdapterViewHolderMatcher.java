@@ -17,7 +17,7 @@ public class FeedAdapterViewHolderMatcher
 {
     /**
      * checks that the item at this position in the recycler view matches the given feed item
-     * checks the title and the publication date
+     * checks the title only
      */
     public static Matcher<View> atPosition(final int position, FeedItem feedItem)
     {
@@ -36,8 +36,7 @@ public class FeedAdapterViewHolderMatcher
                 FeedAdapter.FeedViewHolder item = (FeedAdapter.FeedViewHolder) view.findViewHolderForAdapterPosition(position);
                 if (item == null)
                     return false;
-                return item.textViewTitle.getText().toString().equals(feedItem.getTitle())
-                        && item.textViewTime.getText().toString().equals(feedItem.getPubDate());
+                return item.textViewTitle.getText().toString().equals(feedItem.getTitle());
             }
         };
     }

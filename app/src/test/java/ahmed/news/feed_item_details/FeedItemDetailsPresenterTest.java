@@ -74,7 +74,6 @@ public class FeedItemDetailsPresenterTest
         Mockito.verify(mView).showDescription(DESCRIPTION);
         Mockito.verify(mView).showUrlString(URL);
         Mockito.verify(mView).showImage(IMAGE);
-        Mockito.verify(mView).showDate(DATE);
     }
 
     /**

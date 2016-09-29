@@ -8,9 +8,14 @@ import org.simpleframework.xml.Namespace;
 import org.simpleframework.xml.Root;
 
 import java.io.Serializable;
+import java.text.ParseException;
+import java.util.Calendar;
 import java.util.List;
 
 import javax.inject.Inject;
+
+import ahmed.news.data.DateUtils;
+import timber.log.Timber;
 
 /**
  * A feed item represents one story
@@ -35,6 +40,9 @@ public class FeedItem implements Serializable
     @Element(name = "thumbnail", required = false)
     @Namespace(prefix = "media")
     private Image image;
+
+    private Calendar mCalendar;
+
 
     public FeedItem()
     {
@@ -111,5 +119,21 @@ public class FeedItem implements Serializable
         this.link = link;
     }
 
+
+    /**
+     * @return the item's date or null if the publication's date format is wrong
+     */
+    public Calendar getCalendar()
+    {
+        if (mCalendar == null)
+            try
+            {
+                mCalendar = DateUtils.parseDate(pubDate);
+            } catch (ParseException e)
+            {
+                Timber.d("error in parsing date %s", e.getMessage());
+            }
+        return mCalendar;
+    }
 
 }

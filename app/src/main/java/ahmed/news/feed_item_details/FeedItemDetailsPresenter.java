@@ -1,7 +1,13 @@
 package ahmed.news.feed_item_details;
 
+import android.content.Context;
+
+import java.text.ParseException;
+import java.util.Calendar;
+
 import javax.inject.Inject;
 
+import ahmed.news.data.DateUtils;
 import ahmed.news.entity.FeedItem;
 import timber.log.Timber;
 
@@ -13,11 +19,12 @@ public class FeedItemDetailsPresenter implements FeedItemDetailsContract.Present
 {
     protected FeedItemDetailsContract.View mView;
     private FeedItem mFeedItem;
+    private Context mContext;
 
     @Inject
-    public FeedItemDetailsPresenter()
+    public FeedItemDetailsPresenter(Context context)
     {
-
+        mContext = context;
     }
 
     @Override
@@ -42,7 +49,18 @@ public class FeedItemDetailsPresenter implements FeedItemDetailsContract.Present
                     && mFeedItem.getImage().getUrl().length() > 0)
                 mView.showImage(mFeedItem.getImage().getUrl());
             if (mFeedItem.getPubDate() != null)
-                mView.showDate(mFeedItem.getPubDate());
+            {
+                Calendar calendar = mFeedItem.getCalendar();
+                if (calendar != null)
+                {
+                    String dateStr = android.text.format.DateUtils.getRelativeDateTimeString(mContext,
+                            calendar.getTimeInMillis(), android.text.format.DateUtils.MINUTE_IN_MILLIS,
+                            android.text.format.DateUtils.WEEK_IN_MILLIS, android.text.format.DateUtils.FORMAT_SHOW_TIME)
+                            .toString();
+
+                    mView.showDate(dateStr);
+                }
+            }
             if (mFeedItem.getLink() != null)
                 mView.showUrlString(mFeedItem.getLink());
         }

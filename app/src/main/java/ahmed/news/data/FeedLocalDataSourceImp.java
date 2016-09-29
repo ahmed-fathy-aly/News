@@ -7,6 +7,9 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -92,6 +95,11 @@ public class FeedLocalDataSourceImp implements FeedLocalDataSource
             feedItemList.add(feedItem);
 
         } while (feedCursor.moveToNext());
+
+        // sort by date, the latest first
+        Collections.sort(feedItemList,
+                (l, r) ->(l.getCalendar() == null || r.getCalendar() == null)?
+                        0 : r.getCalendar().compareTo(l.getCalendar()));
 
         // create the feed
         channel.setFeedItemList(feedItemList);
