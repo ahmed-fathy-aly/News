@@ -1,6 +1,7 @@
 package ahmed.news;
 
 import android.app.Application;
+import android.os.StrictMode;
 
 import com.google.android.gms.gcm.GcmNetworkManager;
 import com.google.android.gms.gcm.PeriodicTask;
@@ -31,6 +32,20 @@ public class App extends Application
             return;
         }
         LeakCanary.install(this);
+
+        // setup the strict policy
+        if (BuildConfig.DEBUG)
+        {
+            Timber.d("enabling strict mode");
+            StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder()
+                    .detectAll()
+                    .penaltyLog()
+                    .penaltyDialog()
+                    .build());
+            StrictMode.setVmPolicy(new StrictMode.VmPolicy.Builder().detectAll()
+                    .penaltyLog()
+                    .build());
+        }
     }
 
     /**

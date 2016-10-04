@@ -53,12 +53,13 @@ public class FeedLocalDataSourceImp implements FeedLocalDataSource
         channel.setDescription(
                 channelCursor.getString(channelCursor.getColumnIndex(
                         DatabaseContract.ChannelEntry.COLOUMN_DESRIPTION)));
+        channelCursor.close();
 
         // get the feed items
         List<FeedItem> feedItemList = new ArrayList<>();
         Cursor feedCursor = database.query(DatabaseContract.FeedItemEntry.TABLE_NAME
                 , null, null, null, null, null, null);
-        if (feedCursor.moveToFirst());
+        if (feedCursor.moveToFirst()) ;
         do
         {
             FeedItem feedItem = new FeedItem();
@@ -94,14 +95,16 @@ public class FeedLocalDataSourceImp implements FeedLocalDataSource
             feedItem.setImage(image);
             feedItem.setRead(feedCursor.getInt(feedCursor.getColumnIndex(
                     DatabaseContract.FeedItemEntry.COLOUMN_IS_READ
-            ))== 1);
+            )) == 1);
             feedItemList.add(feedItem);
 
         } while (feedCursor.moveToNext());
+        feedCursor.close();
+        database.close();
 
         // sort by date, the latest first
         Collections.sort(feedItemList,
-                (l, r) ->(l.getCalendar() == null || r.getCalendar() == null)?
+                (l, r) -> (l.getCalendar() == null || r.getCalendar() == null) ?
                         0 : r.getCalendar().compareTo(l.getCalendar()));
 
         // create the feed
@@ -136,7 +139,7 @@ public class FeedLocalDataSourceImp implements FeedLocalDataSource
             feedContentValues.put(DatabaseContract.FeedItemEntry.COLOUMN_IMAGE_URL, feedItem.getImage().getUrl());
             feedContentValues.put(DatabaseContract.FeedItemEntry.COLOUMN_IMAGE_WIDTH, feedItem.getImage().getWidth());
             feedContentValues.put(DatabaseContract.FeedItemEntry.COLOUMN_IMAGE_HEIGHT, feedItem.getImage().getHeight());
-            feedContentValues.put(DatabaseContract.FeedItemEntry.COLOUMN_IS_READ, feedItem.isRead()? 1: 0);
+            feedContentValues.put(DatabaseContract.FeedItemEntry.COLOUMN_IS_READ, feedItem.isRead() ? 1 : 0);
             database.insert(DatabaseContract.FeedItemEntry.TABLE_NAME, null, feedContentValues);
         }
 
@@ -255,7 +258,7 @@ public class FeedLocalDataSourceImp implements FeedLocalDataSource
                             ", " + DatabaseContract.FeedItemEntry.COLOUMN_IMAGE_WIDTH + " INTEGER \n" +
                             ", " + DatabaseContract.FeedItemEntry.COLOUMN_IMAGE_HEIGHT + " INTEGER \n" +
                             ", " + DatabaseContract.FeedItemEntry.COLOUMN_PUB_DATE + " TEXT \n" +
-                            ", " + DatabaseContract.FeedItemEntry.COLOUMN_IS_READ+ " INTEGER \n" +
+                            ", " + DatabaseContract.FeedItemEntry.COLOUMN_IS_READ + " INTEGER \n" +
                             ", UNIQUE (" + DatabaseContract.FeedItemEntry.COLOUMN_TITLE + ") ON CONFLICT IGNORE)";
             sqLiteDatabase.execSQL(createChannelTable);
             sqLiteDatabase.execSQL(createFeedItemTable);
@@ -265,8 +268,8 @@ public class FeedLocalDataSourceImp implements FeedLocalDataSource
         public void onUpgrade(SQLiteDatabase sqLiteDatabase, int i, int i1)
         {
             // drop the tables and create them again(we don't mind losing the data"
-            String dropChannel= "DROP TABLE IF EXISTS " + DatabaseContract.ChannelEntry.TABLE_NAME;
-            String dropFeed= "DROP TABLE IF EXISTS " + DatabaseContract.FeedItemEntry.TABLE_NAME;
+            String dropChannel = "DROP TABLE IF EXISTS " + DatabaseContract.ChannelEntry.TABLE_NAME;
+            String dropFeed = "DROP TABLE IF EXISTS " + DatabaseContract.FeedItemEntry.TABLE_NAME;
             sqLiteDatabase.execSQL(dropChannel);
             sqLiteDatabase.execSQL(dropFeed);
             onCreate(sqLiteDatabase);
