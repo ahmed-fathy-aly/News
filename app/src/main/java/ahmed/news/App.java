@@ -4,6 +4,7 @@ import android.app.Application;
 
 import com.google.android.gms.gcm.GcmNetworkManager;
 import com.google.android.gms.gcm.PeriodicTask;
+import com.squareup.leakcanary.LeakCanary;
 
 import ahmed.news.data.SyncFeedService;
 import ahmed.news.data.SyncTaskScheduler;
@@ -22,6 +23,14 @@ public class App extends Application
         super.onCreate();
         Timber.plant(new Timber.DebugTree());
         SyncTaskScheduler.scheduleRepeatingSync(this);
+
+        // setup leak canary
+        if (LeakCanary.isInAnalyzerProcess(this)) {
+            // This process is dedicated to LeakCanary for heap analysis.
+            // You should not init your app in this process.
+            return;
+        }
+        LeakCanary.install(this);
     }
 
     /**
