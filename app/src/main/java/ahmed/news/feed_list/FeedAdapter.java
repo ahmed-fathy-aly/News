@@ -82,7 +82,9 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.FeedViewHolder
                     .load(feedItem.getImage().getUrl())
                     .placeholder(R.drawable.ic_placeholder_small)
                     .into(holder.imageViewThumbnial);
+        holder.imageViewNew.setVisibility(feedItem.isRead() ? View.INVISIBLE : View.VISIBLE);
     }
+
 
     @Override
     public int getItemCount()
@@ -101,6 +103,8 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.FeedViewHolder
         TextView textViewTitle;
         @Bind(R.id.text_view_time)
         TextView textViewTime;
+        @Bind(R.id.image_view_new)
+        ImageView imageViewNew;
 
         public FeedViewHolder(View itemView)
         {

@@ -109,6 +109,7 @@ public class FeedListPresenterTest
         verify(mView).showProgress();
         verify(mView, timeout(3000)).showFeedList(feedList);
         verify(mView).hideProgress();
+        verify(mFeedLocalDataSource).markAsRead(feedList);
     }
 
 

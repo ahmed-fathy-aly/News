@@ -43,6 +43,7 @@ public class FeedItem implements Serializable
 
     private Calendar mCalendar;
 
+    private boolean read;
 
     public FeedItem()
     {
@@ -134,6 +135,16 @@ public class FeedItem implements Serializable
                 Timber.d("error in parsing date %s", e.getMessage());
             }
         return mCalendar;
+    }
+
+    public boolean isRead()
+    {
+        return read;
+    }
+
+    public void setRead(boolean read)
+    {
+        this.read = read;
     }
 
 }

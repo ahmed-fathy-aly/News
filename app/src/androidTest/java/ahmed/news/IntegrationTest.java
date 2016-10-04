@@ -117,6 +117,12 @@ public class IntegrationTest
                 {
 
                 }
+
+                @Override
+                public void markAsRead(List<FeedItem> feedItems)
+                {
+
+                }
             };
         }
 

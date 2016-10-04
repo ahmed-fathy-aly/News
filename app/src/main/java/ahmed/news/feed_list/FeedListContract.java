@@ -54,6 +54,7 @@ public class FeedListContract
          * - asks the view to show progress
          * - reads the feedlist and asks the view to show it(or launch the sync service if it's not there)
          * - asks the view to hide progress
+         * - marks these feeditems as read in the database(so they only appear as unread one time)
          */
         void getFeed();
 

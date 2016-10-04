@@ -41,4 +41,14 @@
 
         tools:text="Time"/>
 
+    <ImageView
+        android:id="@+id/image_view_new"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_new"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentRight="true"
+        android:layout_margin="4dp"
+        />
+
 </RelativeLayout>

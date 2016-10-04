@@ -1,7 +1,9 @@
 package ahmed.news.data;
 
 import java.io.IOException;
+import java.util.List;
 
+import ahmed.news.entity.FeedItem;
 import ahmed.news.entity.RSSFeed;
 
 /**
@@ -17,9 +19,13 @@ public interface FeedLocalDataSource
     RSSFeed getFeed();
 
     /**
-     * replaces the feed's info and adds the feed items(or replaces if they are already there)
+     * replaces the feed's info and adds the feed items(or ignore them if they(same title) are already there)
      */
     void storeFeed(RSSFeed newFeed);
 
-
+    /**
+     * updates the feed items so when they are queried next time they'll be marked as read
+     * If the feedItems are not already there, does nothing
+     * */
+    void markAsRead(List<FeedItem> feedItems);
 }

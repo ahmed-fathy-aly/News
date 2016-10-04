@@ -32,7 +32,7 @@ public class FeedLocalDataSourceImpTest
     final FeedItem FEED_ITEM4 = new FeedItem("date4", "title4", "desc4", "link4", new Image(3, 6, "img4"));
 
     final String CHANNEL_TITLE = "channel title";
-    final String CHANNEL_DESCRIPTION= "channel description";
+    final String CHANNEL_DESCRIPTION = "channel description";
 
     private FeedLocalDataSourceImp mFeedLocalDataSourceImp;
 
@@ -59,8 +59,6 @@ public class FeedLocalDataSourceImpTest
     @Test
     public void testInsertAndRead()
     {
-        mFeedLocalDataSourceImp.getFeed();
-
         // store
         List<FeedItem> feedItems = Arrays.asList(FEED_ITEM1, FEED_ITEM2, FEED_ITEM3);
         Channel channel = new Channel(CHANNEL_TITLE, CHANNEL_DESCRIPTION, feedItems);
@@ -139,6 +137,67 @@ public class FeedLocalDataSourceImpTest
         assertSameFeedItem(FEED_ITEM4, rssFeed.getChannel().getFeedItemList().get(3));
 
     }
+
+    /**
+     * adds some items
+     * marks them as read
+     * read the items and make sure they are marked as read
+     */
+    @Test
+    public void testMarkAsRead()
+    {
+        // store
+        List<FeedItem> feedItems = Arrays.asList(FEED_ITEM1, FEED_ITEM2, FEED_ITEM3);
+        Channel channel = new Channel(CHANNEL_TITLE, CHANNEL_DESCRIPTION, feedItems);
+        mFeedLocalDataSourceImp.storeFeed(new RSSFeed(channel));
+
+        // mark as read
+        mFeedLocalDataSourceImp.markAsRead(feedItems);
+
+        // read and assert they are marked as read
+        RSSFeed rssFeed = mFeedLocalDataSourceImp.getFeed();
+        for (FeedItem feedItem : feedItems)
+            feedItem.setRead(true);
+        assertSameFeedItem(FEED_ITEM1, rssFeed.getChannel().getFeedItemList().get(0));
+        assertSameFeedItem(FEED_ITEM2, rssFeed.getChannel().getFeedItemList().get(1));
+        assertSameFeedItem(FEED_ITEM3, rssFeed.getChannel().getFeedItemList().get(2));
+
+    }
+
+    /**
+     * stores some items
+     * mark them as read
+     * store them again along with other un read items
+     * make sure those who were marked as read are still marked as read
+     */
+    @Test
+    public void testMarkAsReadThenUpdateDuplicate()
+    {
+        // store
+        List<FeedItem> feedItems = Arrays.asList(FEED_ITEM1, FEED_ITEM2, FEED_ITEM3);
+        Channel channel = new Channel(CHANNEL_TITLE, CHANNEL_DESCRIPTION, feedItems);
+        mFeedLocalDataSourceImp.storeFeed(new RSSFeed(channel));
+
+        // mark as read
+        mFeedLocalDataSourceImp.markAsRead(feedItems);
+
+        // store again
+
+        List<FeedItem> newFeedItems = Arrays.asList(FEED_ITEM2, FEED_ITEM3, FEED_ITEM4);
+        Channel newChannel= new Channel(CHANNEL_TITLE, CHANNEL_DESCRIPTION, newFeedItems);
+        mFeedLocalDataSourceImp.storeFeed(new RSSFeed(newChannel));
+
+
+        // read and assert they are marked as read
+        RSSFeed rssFeed = mFeedLocalDataSourceImp.getFeed();
+        for (FeedItem feedItem : feedItems)
+            feedItem.setRead(true);
+        assertSameFeedItem(FEED_ITEM1, rssFeed.getChannel().getFeedItemList().get(0));
+        assertSameFeedItem(FEED_ITEM2, rssFeed.getChannel().getFeedItemList().get(1));
+        assertSameFeedItem(FEED_ITEM3, rssFeed.getChannel().getFeedItemList().get(2));
+        assertSameFeedItem(FEED_ITEM4, rssFeed.getChannel().getFeedItemList().get(3));
+
+    }
     private void assertSameFeedItem(FeedItem expected, FeedItem found)
     {
         assertEquals(expected.getTitle(), found.getTitle());
@@ -148,6 +207,6 @@ public class FeedLocalDataSourceImpTest
         assertEquals(expected.getImage().getUrl(), found.getImage().getUrl());
         assertEquals(expected.getImage().getWidth(), found.getImage().getWidth());
         assertEquals(expected.getImage().getHeight(), found.getImage().getHeight());
-
+        assertEquals(expected.isRead(), found.isRead());
     }
 }

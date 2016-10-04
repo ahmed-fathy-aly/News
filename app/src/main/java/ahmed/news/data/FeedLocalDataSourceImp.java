@@ -92,6 +92,9 @@ public class FeedLocalDataSourceImp implements FeedLocalDataSource
                             DatabaseContract.FeedItemEntry.COLOUMN_IMAGE_URL
                     )));
             feedItem.setImage(image);
+            feedItem.setRead(feedCursor.getInt(feedCursor.getColumnIndex(
+                    DatabaseContract.FeedItemEntry.COLOUMN_IS_READ
+            ))== 1);
             feedItemList.add(feedItem);
 
         } while (feedCursor.moveToNext());
@@ -133,7 +136,33 @@ public class FeedLocalDataSourceImp implements FeedLocalDataSource
             feedContentValues.put(DatabaseContract.FeedItemEntry.COLOUMN_IMAGE_URL, feedItem.getImage().getUrl());
             feedContentValues.put(DatabaseContract.FeedItemEntry.COLOUMN_IMAGE_WIDTH, feedItem.getImage().getWidth());
             feedContentValues.put(DatabaseContract.FeedItemEntry.COLOUMN_IMAGE_HEIGHT, feedItem.getImage().getHeight());
+            feedContentValues.put(DatabaseContract.FeedItemEntry.COLOUMN_IS_READ, feedItem.isRead()? 1: 0);
             database.insert(DatabaseContract.FeedItemEntry.TABLE_NAME, null, feedContentValues);
+        }
+
+        // close the database
+        database.setTransactionSuccessful();
+        database.endTransaction();
+        database.close();
+    }
+
+    @Override
+    public void markAsRead(List<FeedItem> feedItems)
+    {
+        // open the database
+        DatabaseHelper databaseHelper = new DatabaseHelper(mContext);
+        SQLiteDatabase database = databaseHelper.getWritableDatabase();
+        database.beginTransaction();
+
+        // insert the feed items
+        for (FeedItem feedItem : feedItems)
+        {
+            ContentValues feedContentValues = new ContentValues();
+            feedContentValues.put(DatabaseContract.FeedItemEntry.COLOUMN_IS_READ, 1);
+            database.update(DatabaseContract.FeedItemEntry.TABLE_NAME,
+                    feedContentValues,
+                    DatabaseContract.FeedItemEntry.COLOUMN_TITLE + " =?",
+                    new String[]{feedItem.getTitle()});
         }
 
         // close the database
@@ -171,7 +200,7 @@ public class FeedLocalDataSourceImp implements FeedLocalDataSource
     private class DatabaseContract
     {
         final static String DATABASE_NAME = "ahmed.news.data";
-        final static int DATABASE_VERSION = 2;
+        final static int DATABASE_VERSION = 4;
 
         class ChannelEntry
         {
@@ -191,6 +220,8 @@ public class FeedLocalDataSourceImp implements FeedLocalDataSource
             final static String COLOUMN_IMAGE_WIDTH = "image_width";
             final static String COLOUMN_IMAGE_HEIGHT = "image_height";
             final static String COLOUMN_PUB_DATE = "pub_date";
+            final static String COLOUMN_IS_READ = "is_read";
+
         }
 
     }
@@ -224,7 +255,8 @@ public class FeedLocalDataSourceImp implements FeedLocalDataSource
                             ", " + DatabaseContract.FeedItemEntry.COLOUMN_IMAGE_WIDTH + " INTEGER \n" +
                             ", " + DatabaseContract.FeedItemEntry.COLOUMN_IMAGE_HEIGHT + " INTEGER \n" +
                             ", " + DatabaseContract.FeedItemEntry.COLOUMN_PUB_DATE + " TEXT \n" +
-                            ", UNIQUE (" + DatabaseContract.FeedItemEntry.COLOUMN_TITLE + ") ON CONFLICT REPLACE)";
+                            ", " + DatabaseContract.FeedItemEntry.COLOUMN_IS_READ+ " INTEGER \n" +
+                            ", UNIQUE (" + DatabaseContract.FeedItemEntry.COLOUMN_TITLE + ") ON CONFLICT IGNORE)";
             sqLiteDatabase.execSQL(createChannelTable);
             sqLiteDatabase.execSQL(createFeedItemTable);
         }

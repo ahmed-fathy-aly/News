@@ -1,14 +1,18 @@
 package ahmed.news.feed_list;
 
+import java.util.List;
+
 import javax.inject.Inject;
 
 import ahmed.news.data.FeedDataSync;
 import ahmed.news.data.FeedLocalDataSource;
+import ahmed.news.entity.FeedItem;
 import ahmed.news.entity.RSSFeed;
 import rx.Observable;
 import rx.Observer;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
+import timber.log.Timber;
 
 /**
  * Created by ahmed on 9/21/2016.
@@ -37,8 +41,12 @@ public class FeedListPresenter implements FeedListContract.Presenter
         // fetch data from API synchronously
         Observable
                 .defer(() -> {
-                    return rx.Observable.just(mFeedLocalDataSource.getFeed());
 
+                    RSSFeed feed = mFeedLocalDataSource.getFeed();
+                    Timber.d("defer feed %b ", (feed == null));
+                    if (feed != null && feed.getChannel() != null && feed.getChannel().getFeedItemList() != null)
+                        mFeedLocalDataSource.markAsRead(feed.getChannel().getFeedItemList());
+                    return Observable.just(feed);
                 })
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -64,16 +72,14 @@ public class FeedListPresenter implements FeedListContract.Presenter
                     @Override
                     public void onNext(RSSFeed rssFeed)
                     {
-                        if (mView != null)
+
+                        if (rssFeed == null || rssFeed.getChannel() == null
+                                || rssFeed.getChannel().getFeedItemList() == null)
+                            syncFeed();
+                        else if (mView != null)
                         {
-                            if (rssFeed == null || rssFeed.getChannel() == null
-                                    || rssFeed.getChannel().getFeedItemList() == null)
-                                syncFeed();
-                            else
-                            {
-                                mView.showFeedList(rssFeed.getChannel().getFeedItemList());
-                                mView.showTitle(rssFeed.getChannel().getTitle());
-                            }
+                            mView.showFeedList(rssFeed.getChannel().getFeedItemList());
+                            mView.showTitle(rssFeed.getChannel().getTitle());
                         }
                     }
                 });
