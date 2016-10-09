@@ -10,6 +10,8 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.mockito.Mockito;
 
+import java.util.Calendar;
+
 import ahmed.news.App;
 import ahmed.news.AppModule;
 import ahmed.news.DaggerAppComponent;
@@ -102,7 +104,7 @@ public class FeedItemDetailsActivityTest
                     mView.showTitle(TITLE);
                     mView.showDescription(DESCRIPTION);
                     mView.showImage(IMAGE);
-                    mView.showDate(Mockito.anyString());
+                    mView.showDate(Calendar.getInstance());
                     mView.showUrlString(URL);
                 }
 

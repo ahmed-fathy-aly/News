@@ -1,5 +1,7 @@
 package ahmed.news.feed_item_details;
 
+import java.util.Calendar;
+
 import ahmed.news.entity.FeedItem;
 
 /**
@@ -57,7 +59,7 @@ public class FeedItemDetailsContract
         /**
          * the publishing date of the list item
          */
-        void showDate(String date);
+        void showDate(Calendar date);
 
         /**
          * redirect to the browser with that uri

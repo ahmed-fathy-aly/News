@@ -2,8 +2,8 @@ package ahmed.news;
 
 import android.content.Context;
 
-import ahmed.news.data.FeedDataSync;
-import ahmed.news.data.FeedDataSyncImp;
+import ahmed.news.data.SyncFeedInteractor;
+import ahmed.news.data.SyncFeedInteractorImp;
 import ahmed.news.data.FeedLocalDataSource;
 import ahmed.news.data.FeedLocalDataSourceImp;
 import ahmed.news.data.FeedRemoteDataSource;
@@ -12,6 +12,8 @@ import ahmed.news.feed_item_details.FeedItemDetailsContract;
 import ahmed.news.feed_item_details.FeedItemDetailsPresenter;
 import ahmed.news.feed_list.FeedListContract;
 import ahmed.news.feed_list.FeedListPresenter;
+import ahmed.news.feed_list.ReadFeedInteractor;
+import ahmed.news.feed_list.ReadFeedInteractorImp;
 import dagger.Module;
 import dagger.Provides;
 
@@ -36,12 +38,6 @@ public class AppModule
     }
 
     @Provides
-    public FeedItemDetailsContract.Presenter provideFeedItemDetailsPreseneter(Context context)
-    {
-        return new FeedItemDetailsPresenter(context);
-    }
-
-    @Provides
     public FeedRemoteDataSource provideFeedRemoteDataSource()
     {
         return new FeedRemoteDataSourceImp();
@@ -54,14 +50,26 @@ public class AppModule
     }
 
     @Provides
-    public FeedDataSync provideFeedDataSync(FeedRemoteDataSource feedRemoteDataSource, FeedLocalDataSource feedLocalDataSource)
+    public SyncFeedInteractor provideSyncFeedInteractor(FeedRemoteDataSource feedRemoteDataSource, FeedLocalDataSource feedLocalDataSource)
     {
-        return new FeedDataSyncImp(feedRemoteDataSource, feedLocalDataSource);
+        return new SyncFeedInteractorImp(feedRemoteDataSource, feedLocalDataSource);
     }
 
     @Provides
-    public FeedListContract.Presenter provideFeedListPresenter(FeedLocalDataSource feedLocalDataSource, FeedDataSync feedDataSync)
+    public ReadFeedInteractor provideReadFeedInteractor(FeedLocalDataSource feedLocalDataSource)
     {
-        return new FeedListPresenter(feedLocalDataSource, feedDataSync);
+        return new ReadFeedInteractorImp(feedLocalDataSource);
+    }
+
+    @Provides
+    public FeedItemDetailsContract.Presenter provideFeedItemDetailsPreseneter(Context context)
+    {
+        return new FeedItemDetailsPresenter(context);
+    }
+
+    @Provides
+    public FeedListContract.Presenter provideFeedListPresenter(ReadFeedInteractor readFeedInteractor, SyncFeedInteractor syncFeedInteractor)
+    {
+        return new FeedListPresenter(readFeedInteractor, syncFeedInteractor);
     }
 }

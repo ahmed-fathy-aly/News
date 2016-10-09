@@ -1,25 +1,14 @@
 package ahmed.news.data;
 
-import android.app.IntentService;
-import android.content.Intent;
-
 import com.google.android.gms.gcm.GcmNetworkManager;
 import com.google.android.gms.gcm.GcmTaskService;
 import com.google.android.gms.gcm.TaskParams;
 
 import org.greenrobot.eventbus.EventBus;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
 import javax.inject.Inject;
 
 import ahmed.news.App;
-import ahmed.news.entity.FeedItem;
-import ahmed.news.entity.Image;
-import ahmed.news.entity.RSSFeed;
 import ahmed.news.event.FeedUpdatedEvent;
 import timber.log.Timber;
 
@@ -32,7 +21,7 @@ import timber.log.Timber;
 public class SyncFeedService extends GcmTaskService
 {
     @Inject
-    FeedDataSync mFeedDataSync;
+    SyncFeedInteractor mSyncFeedInteractor;
 
     @Override
     public int onRunTask(TaskParams taskParams)
@@ -42,11 +31,10 @@ public class SyncFeedService extends GcmTaskService
         // inject the feed sources and start updating
         App app = (App) getApplication();
         app.getComponent().inject(this);
-        FeedDataSync.SyncResult syncResult = mFeedDataSync.sync();
-        Timber.d("sync status %b", syncResult.isSuccess());
+        SyncFeedInteractor.SyncResult syncResult = mSyncFeedInteractor.syncSynchronous();
 
         // if failed then the service should be rescheduled
-        if (!syncResult.isSuccess())
+        if (syncResult.getErrorMessage() != null)
             return GcmNetworkManager.RESULT_RESCHEDULE;
 
         // if succeeded then notify any one listening for database updated

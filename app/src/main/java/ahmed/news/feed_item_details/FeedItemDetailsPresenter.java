@@ -48,19 +48,8 @@ public class FeedItemDetailsPresenter implements FeedItemDetailsContract.Present
                     && mFeedItem.getImage().getUrl() != null
                     && mFeedItem.getImage().getUrl().length() > 0)
                 mView.showImage(mFeedItem.getImage().getUrl());
-            if (mFeedItem.getPubDate() != null)
-            {
-                Calendar calendar = mFeedItem.getCalendar();
-                if (calendar != null)
-                {
-                    String dateStr = android.text.format.DateUtils.getRelativeDateTimeString(mContext,
-                            calendar.getTimeInMillis(), android.text.format.DateUtils.MINUTE_IN_MILLIS,
-                            android.text.format.DateUtils.WEEK_IN_MILLIS, android.text.format.DateUtils.FORMAT_SHOW_TIME)
-                            .toString();
-
-                    mView.showDate(dateStr);
-                }
-            }
+            if (mFeedItem.getCalendar() != null)
+                    mView.showDate(mFeedItem.getCalendar());
             if (mFeedItem.getLink() != null)
                 mView.showUrlString(mFeedItem.getLink());
         }

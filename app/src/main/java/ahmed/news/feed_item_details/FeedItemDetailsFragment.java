@@ -14,6 +14,8 @@ import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
 
+import java.util.Calendar;
+
 import javax.inject.Inject;
 
 import ahmed.news.App;
@@ -129,9 +131,14 @@ public class FeedItemDetailsFragment extends Fragment implements FeedItemDetails
     }
 
     @Override
-    public void showDate(String date)
+    public void showDate(Calendar calendar)
     {
-        mTextViewDate.setText(date);
+        // show the relative data
+        String dateStr = android.text.format.DateUtils.getRelativeDateTimeString(getContext(),
+                calendar.getTimeInMillis(), android.text.format.DateUtils.MINUTE_IN_MILLIS,
+                android.text.format.DateUtils.WEEK_IN_MILLIS, android.text.format.DateUtils.FORMAT_SHOW_TIME)
+                .toString();
+        mTextViewDate.setText(dateStr);
     }
 
     @Override

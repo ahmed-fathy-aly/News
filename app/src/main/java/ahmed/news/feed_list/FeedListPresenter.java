@@ -4,15 +4,13 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import ahmed.news.data.FeedDataSync;
-import ahmed.news.data.FeedLocalDataSource;
+import ahmed.news.data.SyncFeedInteractor;
 import ahmed.news.entity.FeedItem;
 import ahmed.news.entity.RSSFeed;
 import rx.Observable;
 import rx.Observer;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
-import timber.log.Timber;
 
 /**
  * Created by ahmed on 9/21/2016.
@@ -21,14 +19,14 @@ public class FeedListPresenter implements FeedListContract.Presenter
 {
 
     private FeedListContract.View mView;
-    private FeedLocalDataSource mFeedLocalDataSource;
-    private FeedDataSync mFeedDataSync;
+    private SyncFeedInteractor mSyncFeedInteractor;
+    private ReadFeedInteractor mReadFeedInteractor;
 
     @Inject
-    public FeedListPresenter(FeedLocalDataSource feedLocalDataSource, FeedDataSync feedDataSync)
+    public FeedListPresenter(ReadFeedInteractor readFeedInteractor, SyncFeedInteractor syncFeedInteractor)
     {
-        mFeedLocalDataSource = feedLocalDataSource;
-        mFeedDataSync = feedDataSync;
+        mReadFeedInteractor = readFeedInteractor;
+        mSyncFeedInteractor = syncFeedInteractor;
     }
 
     @Override
@@ -38,101 +36,71 @@ public class FeedListPresenter implements FeedListContract.Presenter
         if (mView != null)
             mView.showProgress();
 
-        // fetch data from API synchronously
-        Observable
-                .defer(() -> {
-
-                    RSSFeed feed = mFeedLocalDataSource.getFeed();
-                    Timber.d("defer feed %b ", (feed == null));
-                    if (feed != null && feed.getChannel() != null && feed.getChannel().getFeedItemList() != null)
-                        mFeedLocalDataSource.markAsRead(feed.getChannel().getFeedItemList());
-                    return Observable.just(feed);
-                })
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Observer<RSSFeed>()
+        // read the feed
+        mReadFeedInteractor.readFeed(new ReadFeedInteractor.ReadFeedCallback()
+        {
+            @Override
+            public void foundFeed(List<FeedItem> feedItems, String channelTitle)
+            {
+                if (mView != null)
                 {
-                    @Override
-                    public void onCompleted()
-                    {
-                        if (mView != null)
-                            mView.hideProgress();
-                    }
+                    mView.showFeedList(feedItems);
+                    mView.showTitle(channelTitle);
+                    mView.hideProgress();
+                }
+            }
 
-                    @Override
-                    public void onError(Throwable e)
-                    {
-                        if (mView != null)
-                        {
-                            mView.showError(e.getMessage());
-                            mView.hideProgress();
-                        }
-                    }
+            @Override
+            public void emptyFeed()
+            {
+                syncFeed();
+            }
 
-                    @Override
-                    public void onNext(RSSFeed rssFeed)
-                    {
+            @Override
+            public void fail(String error)
+            {
+                if (mView != null)
+                {
+                    mView.showError(error);
+                    mView.hideProgress();
+                }
+            }
+        });
 
-                        if (rssFeed == null || rssFeed.getChannel() == null
-                                || rssFeed.getChannel().getFeedItemList() == null)
-                            syncFeed();
-                        else if (mView != null)
-                        {
-                            mView.showFeedList(rssFeed.getChannel().getFeedItemList());
-                            mView.showTitle(rssFeed.getChannel().getTitle());
-                        }
-                    }
-                });
     }
 
     @Override
     public void syncFeed()
     {
-        // show progress
-        if (mView != null)
-            mView.showProgress();
-
-        // sync the data
-        Observable
-                .defer(() -> {
-                    return rx.Observable.just(mFeedDataSync.sync());
-
-                })
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Observer<FeedDataSync.SyncResult>()
+        mSyncFeedInteractor.sync(new SyncFeedInteractor.SyncCallback()
+        {
+            @Override
+            public void syncDone(String channelTitle, List<FeedItem> feedItemsAfterSync)
+            {
+                if (mView != null)
                 {
-                    @Override
-                    public void onCompleted()
-                    {
-                    }
+                    mView.showTitle(channelTitle);
+                    mView.showFeedList(feedItemsAfterSync);
+                    mView.hideProgress();
+                }
+            }
 
-                    @Override
-                    public void onError(Throwable e)
-                    {
-                        if (mView != null)
-                        {
-                            mView.showError(e.getMessage());
-                            mView.hideProgress();
-                        }
-                    }
+            @Override
+            public void error(String errorMessage)
+            {
+                if (mView != null)
+                {
+                    mView.showError(errorMessage);
+                    mView.hideProgress();
+                }
+            }
 
-                    @Override
-                    public void onNext(FeedDataSync.SyncResult syncResult)
-                    {
-                        if (syncResult.isSuccess())
-                            getFeed();
-                        else
-                        {
-                            if (mView != null)
-                            {
-                                mView.showError("Sync Failed");
-                                mView.hideProgress();
-                            }
-                        }
-                    }
-                });
-
+            @Override
+            public void noFeedFound()
+            {
+                // do nothing for now
+            }
+        });
     }
 
     @Override

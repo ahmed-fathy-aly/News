@@ -21,6 +21,7 @@ import java.util.List;
 import ahmed.news.data.FeedLocalDataSource;
 import ahmed.news.data.FeedRemoteDataSource;
 import ahmed.news.data.FeedRemoteDataSourceImp;
+import ahmed.news.data.SyncFeedInteractor;
 import ahmed.news.entity.Channel;
 import ahmed.news.entity.FeedItem;
 import ahmed.news.entity.RSSFeed;
@@ -38,80 +39,175 @@ import static org.mockito.Mockito.*;
 @RunWith(JUnit4.class)
 public class FeedListPresenterTest
 {
-
-    @Mock
-    private FeedListContract.View mView;
-
-    @Mock
-    private FeedLocalDataSource mFeedLocalDataSource;
-
-    @InjectMocks
-    private FeedListPresenter mPresenter;
-
-    @Rule
-    public MockitoRule mockitoRule = MockitoJUnit.rule();
-
     /**
-     * replaces the android main thread to enable testing locally
-     * mocks the view, and data source and initializes the presenter
-     */
-    @Before
-    public void setUp() throws Exception
-    {
-        MockitoAnnotations.initMocks(this);
-        RxAndroidPlugins.getInstance().registerSchedulersHook(new RxAndroidSchedulersHook()
-        {
-            @Override
-            public Scheduler getMainThreadScheduler()
-            {
-                return Schedulers.immediate();
-            }
-        });
-
-        // create the presenter
-        mPresenter.registerView(mView);
-    }
-
-    /**
-     * resets rxJava so it can use Android's main thread again
-     */
-    @After
-    public void tearDown()
-    {
-        RxAndroidPlugins.getInstance().reset();
-        mPresenter.unregisterView();
-    }
-
-    /**
-     * the feed data source is mocked to return a hard coded rss feed after some delay
+     * when the read feed interactor returns a feed, the presenter will show it to the view
      */
     @Test
     public void testGetFeed() throws Exception
     {
-        // create dummy feed data
-        List<FeedItem> feedList = Arrays.asList(new FeedItem("item1"), new FeedItem("item2"));
-        String channelName = "Ahmed's Channel";
-        Channel channel = new Channel(channelName, feedList);
-        RSSFeed rssFeed = new RSSFeed(channel);
-        long requestDelayInMillis = 600;
-        when(mFeedLocalDataSource.getFeed()).then(new Answer<RSSFeed>()
-        {
-            @Override
-            public RSSFeed answer(InvocationOnMock invocation) throws Throwable
-            {
-                Thread.sleep(requestDelayInMillis);
-                return rssFeed;
-            }
-        });
+        // mock the view and interactor
+        List<FeedItem> FEED_LIST = Arrays.asList(new FeedItem("item1"), new FeedItem("item2"));
+        String CHANNEL_NAME = "Ahmed's Channel";
+        ReadFeedInteractor readFeedInteractor =
+                c -> {
+                    try
+                    {
+                        Thread.sleep(400);
+                    } catch (InterruptedException e)
+                    {
+                        e.printStackTrace();
+                    }
+                    c.foundFeed(FEED_LIST, CHANNEL_NAME);
+                };
+        FeedListContract.View view = mock(FeedListContract.View.class);
+
+        // setup presenter
+        FeedListPresenter presenter = new FeedListPresenter(readFeedInteractor, null);
+        presenter.registerView(view);
 
         // ask the presenter to get the feed and check the view
-        mPresenter.getFeed();
-        verify(mView).showProgress();
-        verify(mView, timeout(3000)).showFeedList(feedList);
-        verify(mView).hideProgress();
-        verify(mFeedLocalDataSource).markAsRead(feedList);
+        presenter.getFeed();
+        verify(view).showProgress();
+        verify(view, timeout(1000)).showFeedList(FEED_LIST);
+        verify(view, timeout(100)).showTitle(CHANNEL_NAME);
+        verify(view).hideProgress();
     }
 
+    /**
+     * when the feed source returns an empty feed,
+     * the presenter should ask the sync interactor to sync
+     * when the sync interactors finish syncing,
+     * the presenter should present its syncing results
+     */
+    @Test
+    public void testGetEmptyFeed()
+    {
+        // mock the read and sync feed interactors and view
+        List<FeedItem> FEED_LIST = Arrays.asList(new FeedItem("item1"), new FeedItem("item2"));
+        String CHANNEL_NAME = "Ahmed's Channel";
+        ReadFeedInteractor readFeedInteractor = (c) -> c.emptyFeed();
+        SyncFeedInteractor syncFeedInteractor =
+                new SyncFeedInteractor()
+                {
+                    @Override
+                    public void sync(SyncCallback syncCallback)
+                    {
+                        // simulate a delay
+                        try
+                        {
+                            Thread.sleep(400);
+                        } catch (InterruptedException e)
+                        {
+                        }
+                        syncCallback.syncDone(CHANNEL_NAME, FEED_LIST);
+                    }
 
+                    @Override
+                    public SyncResult syncSynchronous()
+                    {
+                        return null;
+                    }
+                };
+        FeedListContract.View view = mock(FeedListContract.View.class);
+
+        // setup presenter
+        FeedListPresenter presenter = new FeedListPresenter(readFeedInteractor, syncFeedInteractor);
+        presenter.registerView(view);
+
+        // ask the presenter to get the feed and check the view
+        presenter.getFeed();
+        verify(view, timeout(100)).showProgress();
+        verify(view, timeout(2000)).showTitle(CHANNEL_NAME);
+        verify(view, timeout(100)).showFeedList(FEED_LIST);
+        verify(view, timeout(100)).hideProgress();
+    }
+
+    /**
+     * when the presenter is asked to sync,
+     * it will present the sync interactor's result
+     */
+    @Test
+    public void testSync()
+    {
+        // mock the read and sync feed interactors and view
+        List<FeedItem> FEED_LIST = Arrays.asList(new FeedItem("item1"), new FeedItem("item2"));
+        String CHANNEL_NAME = "Ahmed's Channel";
+        SyncFeedInteractor syncFeedInteractor =
+                new SyncFeedInteractor()
+                {
+                    @Override
+                    public void sync(SyncCallback syncCallback)
+                    {
+                        // simulate a delay
+                        try
+                        {
+                            Thread.sleep(400);
+                        } catch (InterruptedException e)
+                        {
+                        }
+                        syncCallback.syncDone(CHANNEL_NAME, FEED_LIST);
+                    }
+
+                    @Override
+                    public SyncResult syncSynchronous()
+                    {
+                        return null;
+                    }
+                };
+        FeedListContract.View view = mock(FeedListContract.View.class);
+
+        // setup presenter
+        FeedListPresenter presenter = new FeedListPresenter(null, syncFeedInteractor);
+        presenter.registerView(view);
+
+        // ask the presenter to get the feed and check the view
+        presenter.syncFeed();
+        verify(view, timeout(2000)).showTitle(CHANNEL_NAME);
+        verify(view, timeout(100)).showFeedList(FEED_LIST);
+        verify(view, timeout(100)).hideProgress();
+    }
+
+    /**
+     * when the presenter is asked to sync and the sync interactors fails,
+     * the view should be presented with the error message
+     */
+    @Test
+    public void testSyncFailed()
+    {
+        // mock the sync feed interactors and view
+        String ERROR_MESSAGE = "sync failed";
+        SyncFeedInteractor syncFeedInteractor =
+                new SyncFeedInteractor()
+                {
+                    @Override
+                    public void sync(SyncCallback syncCallback)
+                    {
+                        // simulate a delay
+                        try
+                        {
+                            Thread.sleep(400);
+                        } catch (InterruptedException e)
+                        {
+                        }
+                        syncCallback.error(ERROR_MESSAGE);
+                    }
+
+                    @Override
+                    public SyncResult syncSynchronous()
+                    {
+                        return null;
+                    }
+                };
+        FeedListContract.View view = mock(FeedListContract.View.class);
+
+        // setup presenter
+        FeedListPresenter presenter = new FeedListPresenter(null, syncFeedInteractor);
+        presenter.registerView(view);
+
+        // ask the presenter to get the feed and check the view
+        presenter.syncFeed();
+        verify(view, timeout(1000)).showError(ERROR_MESSAGE);
+        verify(view, timeout(100)).hideProgress();
+    }
 
 }
