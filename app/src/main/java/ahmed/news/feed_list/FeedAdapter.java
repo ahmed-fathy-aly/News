@@ -12,6 +12,7 @@ import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.HashMap;
 import java.util.List;
 
 import ahmed.news.R;
@@ -29,11 +30,13 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.FeedViewHolder
     private Context mContext;
     private Listener mListener;
     private List<FeedItem> mData;
-    private FeedViewHolder mLastClickedViewHolder;
+    private HashMap<String, Integer> mToIdx;
+
     public FeedAdapter(Context context)
     {
         mContext = context;
         mData = new ArrayList<>();
+        mToIdx = new HashMap<>();
     }
 
     /**
@@ -51,6 +54,9 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.FeedViewHolder
     {
         mData.clear();
         mData.addAll(newData);
+        mToIdx.clear();
+        for (int i = 0; i < mData.size(); i++)
+            mToIdx.put(mData.get(i).getTitle(), i);
         notifyDataSetChanged();
     }
 
@@ -100,28 +106,33 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.FeedViewHolder
 
         // update it
         if (idx != -1)
-        {
             mData.get(idx).setRead(true);
-           // notifyItemChanged(idx);
-        }
     }
 
-    public FeedViewHolder getmLastClickedViewHolder()
-    {
-            return mLastClickedViewHolder;
-    }
 
     /**
      * find the index of the item with that title
+     *
      * @param title
      * @return -1 if no feed is found with that title
      */
     public int getIdx(String title)
     {
-        for (int i = 0; i < mData.size(); i++)
-            if (mData.get(i).getTitle().equals(title))
-                return i;
-        return -1;
+
+        if (!mToIdx.containsKey(title))
+            return -1;
+        else
+            return mToIdx.get(title);
+    }
+
+    /**
+     * get the data item previously added
+     */
+    public FeedItem getItem(int idx)
+    {
+        if (idx < 0 || idx >= mData.size())
+            return null;
+        return mData.get(idx);
     }
 
     /**
@@ -153,7 +164,6 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.FeedViewHolder
                 @Override
                 public void doClick(View v)
                 {
-                    mLastClickedViewHolder = FeedViewHolder.this;
                     if (mListener != null)
                     {
                         int position = getAdapterPosition();

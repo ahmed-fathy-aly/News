@@ -212,8 +212,18 @@ public class FeedListFragment extends Fragment implements FeedListContract.View,
 
     @Override
     public void markAsRead(FeedItem feedItem) {
+
+        // check the item is not already read
+        int idx = mAdapterFeed.getIdx(feedItem.getTitle());
+        if (idx == -1)
+            return;
+        boolean alreadyRead = mAdapterFeed.getItem(idx).isRead();
+        if (alreadyRead)
+            return;
+
+        // mark it as read in the adapter and store is index to later reRender it
         mAdapterFeed.markAsRead(feedItem.getTitle());
-        mUpdatedIdx = mAdapterFeed.getIdx(feedItem.getTitle());
+        mUpdatedIdx = idx;
     }
 
 
