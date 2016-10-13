@@ -123,6 +123,11 @@ public class IntegrationTest
                 {
 
                 }
+
+                @Override
+                public void markAsRead(String feedItem) {
+
+                }
             };
         }
 

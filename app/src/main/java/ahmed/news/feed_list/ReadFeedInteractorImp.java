@@ -15,6 +15,8 @@ import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
+import static rx.observers.Subscribers.create;
+
 /**
  * uses the local feed data source to read the feed
  * Created by ahmed on 10/6/2016.
@@ -34,20 +36,10 @@ public class ReadFeedInteractorImp implements ReadFeedInteractor
     public void readFeed(ReadFeedCallback callback)
     {
         Observable
-                .create((s)->
-                {
-                    // get the feed and mark it as read
-                    RSSFeed rssFeed = mFeedLocalDataSource.getFeed();
-                    if (rssFeed != null
-                            && rssFeed.getChannel() != null
-                            && rssFeed.getChannel().getFeedItemList() != null)
-                        mFeedLocalDataSource.markAsRead(rssFeed.getChannel().getFeedItemList());
-                    s.onNext(rssFeed);
-                    s.onCompleted();
-                })
+                .defer(()->Observable.just(mFeedLocalDataSource.getFeed()))
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Observer<Object>()
+                .subscribe(new Observer<RSSFeed>()
                 {
                     @Override
                     public void onCompleted()
@@ -61,7 +53,7 @@ public class ReadFeedInteractorImp implements ReadFeedInteractor
                     }
 
                     @Override
-                    public void onNext(Object object)
+                    public void onNext(RSSFeed object)
                     {
                         RSSFeed rssFeed = (RSSFeed) object;
                         if (rssFeed == null
@@ -70,6 +62,34 @@ public class ReadFeedInteractorImp implements ReadFeedInteractor
                             callback.emptyFeed();
                         else
                             callback.foundFeed(rssFeed.getChannel().getFeedItemList(), rssFeed.getChannel().getTitle());
+                    }
+                });
+    }
+
+    @Override
+    public void markAsRead(String feedTitle, MarkAsReadCallback callback)
+    {
+        Observable
+                .create((i)->{mFeedLocalDataSource.markAsRead(feedTitle); i.onCompleted();})
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Observer<Object>()
+                {
+                    @Override
+                    public void onCompleted()
+                    {
+                        callback.marked();
+                    }
+
+                    @Override
+                    public void onError(Throwable e)
+                    {
+
+                    }
+
+                    @Override
+                    public void onNext(Object object)
+                    {
                     }
                 });
     }

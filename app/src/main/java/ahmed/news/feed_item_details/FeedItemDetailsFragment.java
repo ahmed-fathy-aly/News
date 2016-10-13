@@ -121,7 +121,6 @@ public class FeedItemDetailsFragment extends Fragment implements FeedItemDetails
     public void showTitle(String title)
     {
         mTextViewTitle.setText(title);
-
     }
 
     @Override
@@ -134,7 +133,7 @@ public class FeedItemDetailsFragment extends Fragment implements FeedItemDetails
     public void showDate(Calendar calendar)
     {
         // show the relative data
-        String dateStr = android.text.format.DateUtils.getRelativeDateTimeString(getContext(),
+        String dateStr = android.text.format.DateUtils.getRelativeDateTimeString(getContext().getApplicationContext(),
                 calendar.getTimeInMillis(), android.text.format.DateUtils.MINUTE_IN_MILLIS,
                 android.text.format.DateUtils.WEEK_IN_MILLIS, android.text.format.DateUtils.FORMAT_SHOW_TIME)
                 .toString();

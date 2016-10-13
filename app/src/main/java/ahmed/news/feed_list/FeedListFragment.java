@@ -19,7 +19,9 @@ import android.widget.TextView;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 
+import java.util.IllegalFormatCodePointException;
 import java.util.List;
+import java.util.logging.Handler;
 
 import javax.inject.Inject;
 
@@ -38,8 +40,7 @@ import timber.log.Timber;
  * shows a list of the feed
  * clicking on a feed item will open an activity that shows the details of that feed item
  */
-public class FeedListFragment extends Fragment implements FeedListContract.View, FeedAdapter.Listener, SwipeRefreshLayout.OnRefreshListener
-{
+public class FeedListFragment extends Fragment implements FeedListContract.View, FeedAdapter.Listener, SwipeRefreshLayout.OnRefreshListener {
     /* UI */
     @Bind(R.id.recycler_view_feed)
     RecyclerView mRecyclerViewFeed;
@@ -53,9 +54,9 @@ public class FeedListFragment extends Fragment implements FeedListContract.View,
     @Inject
     FeedListContract.Presenter mPresenter;
     private FeedAdapter mAdapterFeed;
+    private int mUpdatedIdx;
 
-    public FeedListFragment()
-    {
+    public FeedListFragment() {
         // Required empty public constructor
     }
 
@@ -63,8 +64,7 @@ public class FeedListFragment extends Fragment implements FeedListContract.View,
      * Use this factory method to create a new instance of
      * this fragment
      */
-    public static FeedListFragment newInstance()
-    {
+    public static FeedListFragment newInstance() {
         FeedListFragment fragment = new FeedListFragment();
         Bundle args = new Bundle();
         fragment.setArguments(args);
@@ -72,16 +72,37 @@ public class FeedListFragment extends Fragment implements FeedListContract.View,
     }
 
     @Override
-    public void onCreate(Bundle savedInstanceState)
-    {
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState)
+    public void onResume() {
+        super.onResume();
+        renderUpdatedIdx();
+    }
+
+    /**
+     * when an item is marked as read, the adapter won't reRender until this is called
+     */
+    public void renderUpdatedIdx()
     {
+            mRecyclerViewFeed.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    if (mUpdatedIdx != -1)
+                    {
+                        mAdapterFeed.notifyItemChanged(mUpdatedIdx);
+                        mUpdatedIdx = -1;
+                    }
+                }
+            }, 700);
+    }
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_feed_list, container, false);
         ButterKnife.bind(this, view);
@@ -98,8 +119,8 @@ public class FeedListFragment extends Fragment implements FeedListContract.View,
         // setup the recycler view
         mAdapterFeed = new FeedAdapter(getContext());
         mAdapterFeed.setListener(this);
-        mRecyclerViewFeed.setLayoutManager(new LinearLayoutManager(getContext()));
-        mRecyclerViewFeed.addItemDecoration(new DividerItemDecoration(getContext(), DividerItemDecoration.VERTICAL_LIST));
+        mRecyclerViewFeed.setLayoutManager(new LinearLayoutManager(getContext().getApplicationContext()));
+        mRecyclerViewFeed.addItemDecoration(new DividerItemDecoration(getContext().getApplicationContext(), DividerItemDecoration.VERTICAL_LIST));
         mRecyclerViewFeed.setAdapter(mAdapterFeed);
 
         mPresenter.getFeed();
@@ -107,31 +128,27 @@ public class FeedListFragment extends Fragment implements FeedListContract.View,
     }
 
     @Override
-    public void onDestroyView()
-    {
+    public void onDestroyView() {
         super.onDestroyView();
         ButterKnife.unbind(this);
         mPresenter.unregisterView();
+        mAdapterFeed.clearContext();
         EventBus.getDefault().unregister(this);
     }
 
     @Override
-    public void onAttach(Context context)
-    {
+    public void onAttach(Context context) {
         super.onAttach(context);
-        if (context instanceof OnFragmentInteractionListener)
-        {
+        if (context instanceof OnFragmentInteractionListener) {
             mListener = (OnFragmentInteractionListener) context;
-        } else
-        {
+        } else {
             throw new RuntimeException(context.toString()
                     + " must implement OnFragmentInteractionListener");
         }
     }
 
     @Override
-    public void onDetach()
-    {
+    public void onDetach() {
         super.onDetach();
         mListener = null;
     }
@@ -140,8 +157,7 @@ public class FeedListFragment extends Fragment implements FeedListContract.View,
     /**
      * made public for testing(but the presenter is setup in the onCreateView)
      */
-    public void setPresenter(FeedListPresenter presenter)
-    {
+    public void setPresenter(FeedListPresenter presenter) {
         if (mPresenter != null)
             mPresenter.unregisterView();
         mPresenter = presenter;
@@ -150,67 +166,59 @@ public class FeedListFragment extends Fragment implements FeedListContract.View,
 
     @Override
     public void onItemClick(int position, FeedItem feedItem, View view,
-                            TextView textViewTitle, ImageView imageViewThumbnail)
-    {
+                            TextView textViewTitle, ImageView imageViewThumbnail) {
+        mPresenter.onFeedClicked(feedItem);
         if (mListener != null)
             mListener.onFeedItemClicked(feedItem, view, textViewTitle, imageViewThumbnail);
     }
 
     @Override
-    public void showProgress()
-    {
-        mSwipeRefresh.post(new Runnable()
-        {
+    public void showProgress() {
+        mSwipeRefresh.post(new Runnable() {
             @Override
-            public void run()
-            {
+            public void run() {
                 mSwipeRefresh.setRefreshing(true);
             }
         });
     }
 
     @Override
-    public void hideProgress()
-    {
-        mSwipeRefresh.post(new Runnable()
-        {
+    public void hideProgress() {
+        mSwipeRefresh.post(new Runnable() {
             @Override
-            public void run()
-            {
+            public void run() {
                 mSwipeRefresh.setRefreshing(false);
             }
         });
     }
 
     @Override
-    public void showError(String errorMessage)
-    {
+    public void showError(String errorMessage) {
         Timber.d("error %s", errorMessage);
         Snackbar.make(mViewContainer, errorMessage, Snackbar.LENGTH_SHORT).show();
     }
 
     @Override
-    public void showFeedList(List<FeedItem> feedList)
-    {
+    public void showFeedList(List<FeedItem> feedList) {
         mAdapterFeed.setData(feedList);
     }
 
     @Override
-    public void showTitle(String title)
-    {
+    public void showTitle(String title) {
         AppCompatActivity activity = (AppCompatActivity) getActivity();
         activity.getSupportActionBar().setTitle(title);
     }
 
-    @Override
-    public void launchSyncService()
-    {
-        // TODO - make the presenter do the sync
-    }
 
     @Override
-    public void onRefresh()
-    {
+    public void markAsRead(FeedItem feedItem) {
+        mAdapterFeed.markAsRead(feedItem.getTitle());
+        mUpdatedIdx = mAdapterFeed.getIdx(feedItem.getTitle());
+    }
+
+
+    @Override
+    public void onRefresh() {
         mPresenter.syncFeed();
     }
 
@@ -221,15 +229,13 @@ public class FeedListFragment extends Fragment implements FeedListContract.View,
      * to the activity and potentially other fragments contained in that
      * activity.
      */
-    public interface OnFragmentInteractionListener
-    {
+    public interface OnFragmentInteractionListener {
         void onFeedItemClicked(FeedItem feedItem, View view,
                                TextView textViewTitle, ImageView imageViewThumbnail);
     }
 
     @Subscribe
-    public void onEvent(FeedUpdatedEvent feedUpdatedEvent)
-    {
+    public void onEvent(FeedUpdatedEvent feedUpdatedEvent) {
         mPresenter.getFeed();
     }
 }

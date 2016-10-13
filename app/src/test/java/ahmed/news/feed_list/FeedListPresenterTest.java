@@ -8,6 +8,7 @@ import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.junit.MockitoJUnit;
@@ -48,8 +49,9 @@ public class FeedListPresenterTest
         // mock the view and interactor
         List<FeedItem> FEED_LIST = Arrays.asList(new FeedItem("item1"), new FeedItem("item2"));
         String CHANNEL_NAME = "Ahmed's Channel";
-        ReadFeedInteractor readFeedInteractor =
-                c -> {
+        ReadFeedInteractor readFeedInteractor = Mockito.mock(ReadFeedInteractor.class);
+        doAnswer((i) ->
+                {
                     try
                     {
                         Thread.sleep(400);
@@ -57,9 +59,12 @@ public class FeedListPresenterTest
                     {
                         e.printStackTrace();
                     }
-                    c.foundFeed(FEED_LIST, CHANNEL_NAME);
-                };
-        FeedListContract.View view = mock(FeedListContract.View.class);
+                    ReadFeedInteractor.ReadFeedCallback callback = i.getArgument(0);
+                    callback.foundFeed(FEED_LIST, CHANNEL_NAME);
+                    return null;
+                }
+        ).when(readFeedInteractor).readFeed(any());
+        FeedListContract.View view = Mockito.mock(FeedListContract.View.class);
 
         // setup presenter
         FeedListPresenter presenter = new FeedListPresenter(readFeedInteractor, null);
@@ -85,7 +90,14 @@ public class FeedListPresenterTest
         // mock the read and sync feed interactors and view
         List<FeedItem> FEED_LIST = Arrays.asList(new FeedItem("item1"), new FeedItem("item2"));
         String CHANNEL_NAME = "Ahmed's Channel";
-        ReadFeedInteractor readFeedInteractor = (c) -> c.emptyFeed();
+        ReadFeedInteractor readFeedInteractor = Mockito.mock(ReadFeedInteractor.class);
+        doAnswer((i) ->
+                {
+                    ReadFeedInteractor.ReadFeedCallback callback = i.getArgument(0);
+                    callback.emptyFeed();
+                    return null;
+                }
+        ).when(readFeedInteractor).readFeed(any());
         SyncFeedInteractor syncFeedInteractor =
                 new SyncFeedInteractor()
                 {
@@ -210,4 +222,35 @@ public class FeedListPresenterTest
         verify(view, timeout(100)).hideProgress();
     }
 
+    /**
+     * when a feed is clicked,
+     * the presenter will mark it as read
+     */
+    @Test
+    public void testFeedClicked()
+    {
+        // mock the view and interactor
+        String FEED_TITLE = "feeda";
+        FeedListContract.View view = Mockito.mock(FeedListContract.View.class);
+        ReadFeedInteractor readFeedInteractor = Mockito.mock(ReadFeedInteractor.class);
+        doAnswer((i) ->
+                {
+                        ReadFeedInteractor.MarkAsReadCallback callback = i.getArgument(1);
+                        callback.marked();
+                        return null;
+                }
+        ).when(readFeedInteractor).markAsRead(eq(FEED_TITLE), any());
+
+        // setup the presenter
+        FeedListPresenter presenter = new FeedListPresenter(readFeedInteractor, null);
+        presenter.registerView(view);
+
+        // click on an item
+        FeedItem feedItem = new FeedItem(FEED_TITLE);
+        presenter.onFeedClicked(feedItem);
+
+        // check the interactor is asked to mark it as read and the view is asked to show its details
+        Mockito.verify(readFeedInteractor, timeout(100)).markAsRead(Mockito.eq(FEED_TITLE), any());
+        Mockito.verify(view, timeout(100)).markAsRead(feedItem);
+    }
 }

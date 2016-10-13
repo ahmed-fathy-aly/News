@@ -28,4 +28,10 @@ public interface FeedLocalDataSource
      * If the feedItems are not already there, does nothing
      * */
     void markAsRead(List<FeedItem> feedItems);
+
+    /**
+     * update that feeditem so when it's queried next time, it'll be marked as read
+     * if the feed item is not already there, does nothing
+     */
+    void markAsRead(String feedTitle);
 }

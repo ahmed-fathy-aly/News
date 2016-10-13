@@ -98,6 +98,11 @@ public class FeedListActivityTest
         }
 
         @Override
+        public void onFeedClicked(FeedItem feedItem) {
+
+        }
+
+        @Override
         public void registerView(FeedListContract.View view)
         {
             mView = view;

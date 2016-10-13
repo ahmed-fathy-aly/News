@@ -144,7 +144,7 @@ public class FeedLocalDataSourceImpTest
      * read the items and make sure they are marked as read
      */
     @Test
-    public void testMarkAsRead()
+    public void testMarkManyAsRead()
     {
         // store
         List<FeedItem> feedItems = Arrays.asList(FEED_ITEM1, FEED_ITEM2, FEED_ITEM3);
@@ -165,13 +165,37 @@ public class FeedLocalDataSourceImpTest
     }
 
     /**
+     * adds some items
+     * marks one of them as read
+     * read the items and make sure they are marked as read
+     */
+    @Test
+    public void testMarkOneAsRead()
+    {
+        // store
+        List<FeedItem> feedItems = Arrays.asList(FEED_ITEM1, FEED_ITEM2, FEED_ITEM3);
+        Channel channel = new Channel(CHANNEL_TITLE, CHANNEL_DESCRIPTION, feedItems);
+        mFeedLocalDataSourceImp.storeFeed(new RSSFeed(channel));
+
+        // mark as read
+        mFeedLocalDataSourceImp.markAsRead(FEED_ITEM1.getTitle());
+
+        // read and assert it ise marked as read
+        RSSFeed rssFeed = mFeedLocalDataSourceImp.getFeed();
+        FEED_ITEM1.setRead(true);
+        assertSameFeedItem(FEED_ITEM1, rssFeed.getChannel().getFeedItemList().get(0));
+        assertSameFeedItem(FEED_ITEM2, rssFeed.getChannel().getFeedItemList().get(1));
+        assertSameFeedItem(FEED_ITEM3, rssFeed.getChannel().getFeedItemList().get(2));
+    }
+
+    /**
      * stores some items
      * mark them as read
      * store them again along with other un read items
      * make sure those who were marked as read are still marked as read
      */
     @Test
-    public void testMarkAsReadThenUpdateDuplicate()
+    public void testMarkManyAsReadThenUpdateDuplicate()
     {
         // store
         List<FeedItem> feedItems = Arrays.asList(FEED_ITEM1, FEED_ITEM2, FEED_ITEM3);
@@ -198,6 +222,42 @@ public class FeedLocalDataSourceImpTest
         assertSameFeedItem(FEED_ITEM4, rssFeed.getChannel().getFeedItemList().get(3));
 
     }
+
+
+    /**
+     * stores some items
+     * mark one of them as read
+     * store them again along with other un read items
+     * make sure those who were marked as read are still marked as read
+     */
+    @Test
+    public void testMarkOneAsReadThenUpdateDuplicate()
+    {
+        // store
+        List<FeedItem> feedItems = Arrays.asList(FEED_ITEM1, FEED_ITEM2, FEED_ITEM3);
+        Channel channel = new Channel(CHANNEL_TITLE, CHANNEL_DESCRIPTION, feedItems);
+        mFeedLocalDataSourceImp.storeFeed(new RSSFeed(channel));
+
+        // mark as read
+        mFeedLocalDataSourceImp.markAsRead(FEED_ITEM2.getTitle());
+
+        // store again
+        List<FeedItem> newFeedItems = Arrays.asList(FEED_ITEM2, FEED_ITEM3, FEED_ITEM4);
+        Channel newChannel= new Channel(CHANNEL_TITLE, CHANNEL_DESCRIPTION, newFeedItems);
+        mFeedLocalDataSourceImp.storeFeed(new RSSFeed(newChannel));
+
+
+        // read and assert they are marked as read
+        RSSFeed rssFeed = mFeedLocalDataSourceImp.getFeed();
+        FEED_ITEM2.setRead(true);
+        assertSameFeedItem(FEED_ITEM1, rssFeed.getChannel().getFeedItemList().get(0));
+        assertSameFeedItem(FEED_ITEM2, rssFeed.getChannel().getFeedItemList().get(1));
+        assertSameFeedItem(FEED_ITEM3, rssFeed.getChannel().getFeedItemList().get(2));
+        assertSameFeedItem(FEED_ITEM4, rssFeed.getChannel().getFeedItemList().get(3));
+
+    }
+
+
     private void assertSameFeedItem(FeedItem expected, FeedItem found)
     {
         assertEquals(expected.getTitle(), found.getTitle());

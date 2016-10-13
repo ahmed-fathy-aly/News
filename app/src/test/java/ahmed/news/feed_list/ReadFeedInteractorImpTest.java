@@ -25,6 +25,8 @@ import rx.android.plugins.RxAndroidPlugins;
 import rx.android.plugins.RxAndroidSchedulersHook;
 import rx.schedulers.Schedulers;
 
+import static android.icu.lang.UCharacter.GraphemeClusterBreak.T;
+
 /**
  * Created by ahmed on 10/7/2016.
  */
@@ -58,7 +60,7 @@ public class ReadFeedInteractorImpTest
     }
 
     /**
-     * when the data source provides a non-empty feed, the interactor should read it and mark it as read
+     * when the data source provides a non-empty feed, the interactor should read it and return it
      */
     @Test
     public void testReadFeed() throws InterruptedException
@@ -80,7 +82,7 @@ public class ReadFeedInteractorImpTest
 
         // check the feed is returned and the data source is asked to read the items
         Mockito.verify(callback, Mockito.timeout(100)).foundFeed(FEED_LIST, CHANNEL_TITLE);
-        Mockito.verify(feedLocalDataSource).markAsRead(FEED_LIST);
+        Mockito.verify(feedLocalDataSource, Mockito.times(0)).markAsRead(FEED_LIST);
     }
 
     /**
@@ -106,4 +108,25 @@ public class ReadFeedInteractorImpTest
         Mockito.verify(feedLocalDataSource, Mockito.times(0)).markAsRead(Mockito.anyList());
     }
 
+    /**
+     * when an item is marked as read, the data source should mark it as read and the success callback is invoked
+     */
+    @Test
+    public void testMarkAsRead()
+    {
+        String FEED_TITLE = "feeda";
+        // mock the data source and callback
+        FeedLocalDataSource feedLocalDataSource = Mockito.mock(FeedLocalDataSource.class);
+        ReadFeedInteractor.MarkAsReadCallback callback = Mockito.mock(ReadFeedInteractor.MarkAsReadCallback.class);
+
+        // setup the interactor
+        ReadFeedInteractor readFeedInteractor = new ReadFeedInteractorImp(feedLocalDataSource);
+
+        // mark as read
+        readFeedInteractor.markAsRead(FEED_TITLE, callback);
+
+        // verify the callback is invoked and the data source marks the item
+        Mockito.verify(feedLocalDataSource, Mockito.timeout(100)).markAsRead(FEED_TITLE);
+        Mockito.verify(callback, Mockito.timeout(100)).marked();
+    }
 }

@@ -29,7 +29,7 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.FeedViewHolder
     private Context mContext;
     private Listener mListener;
     private List<FeedItem> mData;
-
+    private FeedViewHolder mLastClickedViewHolder;
     public FeedAdapter(Context context)
     {
         mContext = context;
@@ -83,7 +83,7 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.FeedViewHolder
                     .placeholder(R.drawable.ic_placeholder_small)
                     .into(holder.imageViewThumbnial);
         holder.textViewTitle.setTextColor(mContext.getResources().getColor(
-                feedItem.isRead() ? R.color.secondary_text :R.color.primary_text));
+                feedItem.isRead() ? R.color.secondary_text : R.color.primary_text));
     }
 
 
@@ -91,6 +91,45 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.FeedViewHolder
     public int getItemCount()
     {
         return mData.size();
+    }
+
+    public void markAsRead(String feedTitle)
+    {
+        // find the item
+        int idx = getIdx(feedTitle);
+
+        // update it
+        if (idx != -1)
+        {
+            mData.get(idx).setRead(true);
+           // notifyItemChanged(idx);
+        }
+    }
+
+    public FeedViewHolder getmLastClickedViewHolder()
+    {
+            return mLastClickedViewHolder;
+    }
+
+    /**
+     * find the index of the item with that title
+     * @param title
+     * @return -1 if no feed is found with that title
+     */
+    public int getIdx(String title)
+    {
+        for (int i = 0; i < mData.size(); i++)
+            if (mData.get(i).getTitle().equals(title))
+                return i;
+        return -1;
+    }
+
+    /**
+     * clears reference to the context
+     */
+    public void clearContext()
+    {
+        mContext = null;
     }
 
     /**
@@ -114,6 +153,7 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.FeedViewHolder
                 @Override
                 public void doClick(View v)
                 {
+                    mLastClickedViewHolder = FeedViewHolder.this;
                     if (mListener != null)
                     {
                         int position = getAdapterPosition();

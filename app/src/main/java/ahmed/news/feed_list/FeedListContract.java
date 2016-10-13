@@ -39,10 +39,9 @@ public class FeedListContract
         void showTitle(String title);
 
         /**
-         * starts the component that will update the local database from the internet
+         * shows that this feed item is read(a mark to differentiate it from the unread one)
          */
-        void launchSyncService();
-
+        void markAsRead(FeedItem feedItem);
     }
 
     public interface Presenter
@@ -63,6 +62,11 @@ public class FeedListContract
          * the presenter just asks the view to launch the sync service
          */
         void syncFeed();
+
+        /**
+         * when a feed is clicked, the presenter will mark it as read and ask the view to open its details
+         */
+        void onFeedClicked(FeedItem feedItem);
 
         /**
          * connects the view that will be presented with data

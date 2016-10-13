@@ -174,6 +174,25 @@ public class FeedLocalDataSourceImp implements FeedLocalDataSource
         database.close();
     }
 
+    @Override
+    public void markAsRead(String feedTitle)
+    {
+        // open the database
+        DatabaseHelper databaseHelper = new DatabaseHelper(mContext);
+        SQLiteDatabase database = databaseHelper.getWritableDatabase();
+
+        // insert the feed item
+        ContentValues feedContentValues = new ContentValues();
+        feedContentValues.put(DatabaseContract.FeedItemEntry.COLOUMN_IS_READ, 1);
+        database.update(DatabaseContract.FeedItemEntry.TABLE_NAME,
+                feedContentValues,
+                DatabaseContract.FeedItemEntry.COLOUMN_TITLE + " =?",
+                new String[]{feedTitle});
+
+        // close the database
+        database.close();
+    }
+
     /**
      * removes the content all both tables
      */

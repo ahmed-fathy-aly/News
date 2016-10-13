@@ -13,7 +13,7 @@ import ahmed.news.entity.RSSFeed;
 public interface ReadFeedInteractor
 {
     /**
-     * fetches the feed from the data source and mark it as read
+     * fetches the feed from the data source
      * operates asynchronously
      */
     void readFeed(ReadFeedCallback callback);
@@ -23,6 +23,17 @@ public interface ReadFeedInteractor
         void foundFeed(List<FeedItem> feedItems, String channelTitle);
         void emptyFeed();
         void fail(String error);
+    }
+
+    /**
+     * marks that feed item as read
+     * operates asynchronously
+     */
+    void markAsRead(String feedTitle, MarkAsReadCallback callback);
+
+    interface MarkAsReadCallback
+    {
+        void marked();
     }
 
 

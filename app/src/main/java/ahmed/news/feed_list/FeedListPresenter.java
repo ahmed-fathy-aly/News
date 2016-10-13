@@ -104,6 +104,20 @@ public class FeedListPresenter implements FeedListContract.Presenter
     }
 
     @Override
+    public void onFeedClicked(FeedItem feedItem)
+    {
+        mReadFeedInteractor.markAsRead(feedItem.getTitle(), new ReadFeedInteractor.MarkAsReadCallback()
+        {
+            @Override
+            public void marked()
+            {
+                if (mView != null)
+                    mView.markAsRead(feedItem);
+            }
+        });
+    }
+
+    @Override
     public void registerView(FeedListContract.View view)
     {
         mView = view;
