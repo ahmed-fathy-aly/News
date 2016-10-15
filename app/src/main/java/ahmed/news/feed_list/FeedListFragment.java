@@ -135,9 +135,9 @@ public class FeedListFragment extends Fragment implements FeedListContract.View,
         mAdapterFeed.setListener(this);
         mLayoutManager = new LinearLayoutManager(getContext().getApplicationContext());
         mRecyclerViewFeed.setLayoutManager(mLayoutManager);
-        mRecyclerViewFeed.addItemDecoration(new DividerItemDecoration(getContext().getApplicationContext(), DividerItemDecoration.VERTICAL_LIST));
+        mRecyclerViewFeed.addItemDecoration(new DividerItemDecoration(getContext(), DividerItemDecoration.VERTICAL_LIST));
         mRecyclerViewFeed.setAdapter(mAdapterFeed);
-
+        
         // get the saved first visible item
         if (savedInstanceState != null && savedInstanceState.containsKey(FIRST_TITLE))
             mFirstVisibleTitle = savedInstanceState.getString(FIRST_TITLE);
@@ -180,11 +180,11 @@ public class FeedListFragment extends Fragment implements FeedListContract.View,
 
     @Override
     public void onItemClick(int position, FeedItem feedItem, View view,
-                            TextView textViewTitle, ImageView imageViewThumbnail)
+                            TextView textViewTitle, ImageView imageViewThumbnail, TextView textViewTime)
     {
         mPresenter.onFeedClicked(feedItem);
         if (mListener != null)
-            mListener.onFeedItemClicked(feedItem, view, textViewTitle, imageViewThumbnail);
+            mListener.onFeedItemClicked(feedItem, view, textViewTitle, imageViewThumbnail, textViewTime);
     }
 
     @Override
@@ -276,7 +276,7 @@ public class FeedListFragment extends Fragment implements FeedListContract.View,
     public interface OnFragmentInteractionListener
     {
         void onFeedItemClicked(FeedItem feedItem, View view,
-                               TextView textViewTitle, ImageView imageViewThumbnail);
+                               TextView textViewTitle, ImageView imageViewThumbnail, TextView textViewTime);
     }
 
     @Subscribe

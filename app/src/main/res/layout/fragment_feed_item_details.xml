@@ -33,6 +33,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="right"
             android:textColor="@color/secondary_text"
+            android:transitionName="@string/transiation_feed_to_details_date"
             android:textSize="18sp"/>
 
         <TextView

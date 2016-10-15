@@ -155,6 +155,8 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.FeedViewHolder
         TextView textViewTitle;
         @Bind(R.id.text_view_time)
         TextView textViewTime;
+        @Bind(R.id.container)
+        View viewContainer;
 
         public FeedViewHolder(View itemView)
         {
@@ -169,7 +171,7 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.FeedViewHolder
                     {
                         int position = getAdapterPosition();
                         FeedItem feedItem = mData.get(position);
-                        mListener.onItemClick(position, feedItem, itemView, textViewTitle, imageViewThumbnial);
+                        mListener.onItemClick(position, feedItem, viewContainer, textViewTitle, imageViewThumbnial, textViewTime);
                     }
                 }
             });
@@ -182,6 +184,7 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.FeedViewHolder
         /**
          * called when an item in the list is clicked
          */
-        void onItemClick(int position, FeedItem feedItem, View view, TextView textViewTitle, ImageView imageViewThumbnail);
+        void onItemClick(int position, FeedItem feedItem, View view, TextView textViewTitle,
+                         ImageView imageViewThumbnail, TextView textViewDate);
     }
 }

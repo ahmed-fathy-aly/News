@@ -5,6 +5,8 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
                 android:foreground="?attr/selectableItemBackground"
+                android:transitionName="@string/transiation_feed_to_details"
+                android:id="@+id/container"
     >
 
     <ImageView
