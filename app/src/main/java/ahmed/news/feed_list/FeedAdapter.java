@@ -138,9 +138,10 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.FeedViewHolder
     /**
      * clears reference to the context
      */
-    public void clearContext()
+    public void clearReferences()
     {
         mContext = null;
+        mListener = null;
     }
 
     /**

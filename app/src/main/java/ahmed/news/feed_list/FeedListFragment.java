@@ -1,7 +1,6 @@
 package ahmed.news.feed_list;
 
 import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
@@ -19,24 +18,18 @@ import android.widget.TextView;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 
-import java.util.IllegalFormatCodePointException;
 import java.util.List;
-import java.util.logging.Handler;
 
 import javax.inject.Inject;
 
 import ahmed.news.App;
 import ahmed.news.R;
 import ahmed.news.UI.DividerItemDecoration;
-import ahmed.news.data.SyncFeedService;
-import ahmed.news.data.SyncTaskScheduler;
 import ahmed.news.entity.FeedItem;
 import ahmed.news.event.FeedUpdatedEvent;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import timber.log.Timber;
-
-import static android.icu.lang.UCharacter.GraphemeClusterBreak.L;
 
 /**
  * shows a list of the feed
@@ -61,7 +54,7 @@ public class FeedListFragment extends Fragment implements FeedListContract.View,
     @Inject
     FeedListContract.Presenter mPresenter;
     private FeedAdapter mAdapterFeed;
-    private int mUpdatedIdx;
+    private int mUpdatedIdx = -1;
     private String mFirstVisibleTitle;
     private LinearLayoutManager mLayoutManager;
 
@@ -159,7 +152,7 @@ public class FeedListFragment extends Fragment implements FeedListContract.View,
         super.onDestroyView();
         ButterKnife.unbind(this);
         mPresenter.unregisterView();
-        mAdapterFeed.clearContext();
+        mAdapterFeed.clearReferences();
         EventBus.getDefault().unregister(this);
     }
 
