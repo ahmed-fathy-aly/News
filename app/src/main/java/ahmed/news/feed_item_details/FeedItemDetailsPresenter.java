@@ -49,7 +49,7 @@ public class FeedItemDetailsPresenter implements FeedItemDetailsContract.Present
                     && mFeedItem.getImage().getUrl().length() > 0)
                 mView.showImage(mFeedItem.getImage().getUrl());
             if (mFeedItem.getCalendar() != null)
-                    mView.showDate(mFeedItem.getCalendar());
+                mView.showDate(mFeedItem.getCalendar());
             if (mFeedItem.getLink() != null)
                 mView.showUrlString(mFeedItem.getLink());
         }
@@ -63,7 +63,7 @@ public class FeedItemDetailsPresenter implements FeedItemDetailsContract.Present
             String url = mFeedItem.getLink();
             if (url != null && url.length() > 0)
             {
-                String uri = "http:" + mFeedItem.getLink();
+                String uri = (url.contains("http:") ? "" : "http") + mFeedItem.getLink();
                 mView.openUri(uri);
             }
         }

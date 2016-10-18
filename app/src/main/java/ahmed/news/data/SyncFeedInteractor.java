@@ -14,6 +14,7 @@ public interface SyncFeedInteractor
 
     /**
      * uses the data sources to sync them together
+     * gets data from the remote source, adds it to the local source
      */
     void sync(SyncCallback syncCallback);
 

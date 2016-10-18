@@ -80,7 +80,6 @@ public class FeedItemDetailsFragment extends Fragment implements FeedItemDetails
         App app = (App) getActivity().getApplication();
         app.getComponent().inject(this);
         FeedItem feedItem = (FeedItem) getArguments().getSerializable(ARG_FEED_ITEM);
-        Timber.d("null feeditem %b", (feedItem == null));
         mPresenter.setFeedItem(feedItem);
     }
 
@@ -132,7 +131,7 @@ public class FeedItemDetailsFragment extends Fragment implements FeedItemDetails
     @Override
     public void showDate(Calendar calendar)
     {
-        // show the relative data
+        // show the relative date
         String dateStr = android.text.format.DateUtils.getRelativeDateTimeString(getContext().getApplicationContext(),
                 calendar.getTimeInMillis(), android.text.format.DateUtils.MINUTE_IN_MILLIS,
                 android.text.format.DateUtils.WEEK_IN_MILLIS, android.text.format.DateUtils.FORMAT_SHOW_TIME)
