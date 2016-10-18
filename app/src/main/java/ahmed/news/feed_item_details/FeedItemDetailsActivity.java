@@ -2,20 +2,17 @@ package ahmed.news.feed_item_details;
 
 import android.content.Context;
 import android.content.Intent;
-import android.os.PersistableBundle;
 import android.support.v4.app.Fragment;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
-import ahmed.news.BaseActivity;
-import ahmed.news.R;
+import ahmed.news.BaseFragmentActivity;
 import ahmed.news.entity.FeedItem;
 import timber.log.Timber;
 
 /**
  * a host for the details fragment
  */
-public class FeedItemDetailsActivity extends BaseActivity
+public class FeedItemDetailsActivity extends BaseFragmentActivity
 {
     /* cosntants */
     private static final String EXTRA_FEED_ITEM = "extraFeedItem";

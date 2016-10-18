@@ -10,7 +10,7 @@ import android.view.MenuItem;
  * a place holder for a fragment
  * any activity that will only be a placeholder to a fragment should extend this
  */
-public abstract class BaseActivity extends AppCompatActivity
+public abstract class BaseFragmentActivity extends AppCompatActivity
 {
 
     @Override
