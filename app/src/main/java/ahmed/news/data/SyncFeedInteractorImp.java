@@ -1,9 +1,13 @@
 package ahmed.news.data;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.inject.Inject;
 
+import ahmed.news.Constants;
+import ahmed.news.entity.FeedItem;
 import ahmed.news.entity.RSSFeed;
 import rx.Observable;
 import rx.Subscriber;
@@ -82,6 +86,21 @@ public class SyncFeedInteractorImp implements SyncFeedInteractor
         if (feed == null || feed.getChannel() == null || feed.getChannel().getFeedItemList() == null)
             return new SyncResult(true, null, null, null);
 
-        return new SyncResult(false, null, feed.getChannel().getTitle(), feed.getChannel().getFeedItemList());
+        // keep the most latest feed items and delete the rest
+        List<FeedItem> allItems = feed.getChannel().getFeedItemList();
+        List<FeedItem> newItems = new ArrayList<>();
+        for(int i = 0; i < Math.min(Constants.MAX_KEPT_ITEMS, allItems.size()); i++)
+            newItems.add(allItems.get(i));
+
+        // delete the old ones
+        if (allItems.size() > Constants.MAX_KEPT_ITEMS)
+        {
+            List<String> deletedTitles = new ArrayList<>();
+            for (int i = Constants.MAX_KEPT_ITEMS; i < allItems.size(); i++)
+                deletedTitles.add(allItems.get(i).getTitle());
+            mFeedLocalDataSource.removeItems(deletedTitles);
+        }
+
+        return new SyncResult(false, null, feed.getChannel().getTitle(), newItems);
     }
 }

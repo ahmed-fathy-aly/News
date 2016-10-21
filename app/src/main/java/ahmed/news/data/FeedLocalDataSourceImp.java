@@ -104,6 +104,7 @@ public class FeedLocalDataSourceImp implements FeedLocalDataSource
         } while (feedCursor.moveToNext());
         feedCursor.close();
         database.close();
+        databaseHelper.close();
 
         // sort by date, the latest first
         Collections.sort(feedItemList,
@@ -150,6 +151,7 @@ public class FeedLocalDataSourceImp implements FeedLocalDataSource
         database.setTransactionSuccessful();
         database.endTransaction();
         database.close();
+        databaseHelper.close();
     }
 
     @Override
@@ -175,6 +177,7 @@ public class FeedLocalDataSourceImp implements FeedLocalDataSource
         database.setTransactionSuccessful();
         database.endTransaction();
         database.close();
+        databaseHelper.close();
     }
 
     @Override
@@ -194,6 +197,30 @@ public class FeedLocalDataSourceImp implements FeedLocalDataSource
 
         // close the database
         database.close();
+        databaseHelper.close();
+    }
+
+    @Override
+    public void removeItems(List<String> feedItems)
+    {
+        // open the database
+        DatabaseHelper databaseHelper = new DatabaseHelper(mContext);
+        SQLiteDatabase database = databaseHelper.getWritableDatabase();
+        database.beginTransaction();
+
+        // remove the feed items
+        for (String feedItem : feedItems)
+        {
+            database.delete(DatabaseContract.FeedItemEntry.TABLE_NAME,
+                    DatabaseContract.FeedItemEntry.COLOUMN_TITLE + " =?",
+                    new String[]{feedItem});
+        }
+
+        // close the database
+        database.setTransactionSuccessful();
+        database.endTransaction();
+        database.close();
+        databaseHelper.close();
     }
 
     /**
@@ -217,6 +244,7 @@ public class FeedLocalDataSourceImp implements FeedLocalDataSource
 
         // close the database
         database.close();
+        databaseHelper.close();
     }
 
     /**

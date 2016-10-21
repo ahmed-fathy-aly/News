@@ -37,4 +37,10 @@ public interface FeedLocalDataSource
      * if the feed item is not already there, does nothing
      */
     void markAsRead(String feedTitle);
+
+    /**
+     * synchronous
+     * deletes the items with these titles, does nothing if for the titles that are not there
+     */
+    void removeItems(List<String> titlesToBeRemoved);
 }

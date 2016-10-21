@@ -5,6 +5,7 @@ import android.support.test.InstrumentationRegistry;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.Mockito;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -208,7 +209,7 @@ public class FeedLocalDataSourceImpTest
         // store again
 
         List<FeedItem> newFeedItems = Arrays.asList(FEED_ITEM2, FEED_ITEM3, FEED_ITEM4);
-        Channel newChannel= new Channel(CHANNEL_TITLE, CHANNEL_DESCRIPTION, newFeedItems);
+        Channel newChannel = new Channel(CHANNEL_TITLE, CHANNEL_DESCRIPTION, newFeedItems);
         mFeedLocalDataSourceImp.storeFeed(new RSSFeed(newChannel));
 
 
@@ -243,7 +244,7 @@ public class FeedLocalDataSourceImpTest
 
         // store again
         List<FeedItem> newFeedItems = Arrays.asList(FEED_ITEM2, FEED_ITEM3, FEED_ITEM4);
-        Channel newChannel= new Channel(CHANNEL_TITLE, CHANNEL_DESCRIPTION, newFeedItems);
+        Channel newChannel = new Channel(CHANNEL_TITLE, CHANNEL_DESCRIPTION, newFeedItems);
         mFeedLocalDataSourceImp.storeFeed(new RSSFeed(newChannel));
 
 
@@ -257,6 +258,24 @@ public class FeedLocalDataSourceImpTest
 
     }
 
+    @Test
+    public void testDeleteFeedItems()
+    {
+        // store
+        List<FeedItem> feedItems = Arrays.asList(FEED_ITEM1, FEED_ITEM2, FEED_ITEM3, FEED_ITEM4);
+        Channel channel = new Channel(CHANNEL_TITLE, CHANNEL_DESCRIPTION, feedItems);
+        mFeedLocalDataSourceImp.storeFeed(new RSSFeed(channel));
+
+        // remove
+        List<String> titlesToBeRemoved = Arrays.asList(FEED_ITEM1.getTitle(), FEED_ITEM2.getTitle());
+        mFeedLocalDataSourceImp.removeItems(titlesToBeRemoved);
+
+        // read again
+        RSSFeed rssFeed = mFeedLocalDataSourceImp.getFeed();
+        assertEquals(2, rssFeed.getChannel().getFeedItemList().size());
+        assertSameFeedItem(FEED_ITEM3, rssFeed.getChannel().getFeedItemList().get(0));
+        assertSameFeedItem(FEED_ITEM4, rssFeed.getChannel().getFeedItemList().get(1));
+    }
 
     private void assertSameFeedItem(FeedItem expected, FeedItem found)
     {

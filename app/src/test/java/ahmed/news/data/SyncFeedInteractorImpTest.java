@@ -6,9 +6,11 @@ import org.junit.Test;
 import org.mockito.Mockito;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import ahmed.news.Constants;
 import ahmed.news.entity.Channel;
 import ahmed.news.entity.FeedItem;
 import ahmed.news.entity.RSSFeed;
@@ -84,6 +86,44 @@ public class SyncFeedInteractorImpTest
     }
 
     /**
+     * when the total items after the update is larger than a specific constant, delete the old items
+     */
+    @Test
+    public void testRemoveOldItems() throws Exception
+    {
+        // mock the remote data source to return a large list of items
+        List<FeedItem> TO_BE_KEPT_ITEMS = new ArrayList<>();
+        for (int i = 0; i < Constants.MAX_KEPT_ITEMS; i++)
+            TO_BE_KEPT_ITEMS.add(new FeedItem("kept " + i));
+        List<FeedItem> TO_BE_REMOVED_ITEMS = new ArrayList<>();
+        List<String> TO_BE_REMOVED_TITLES = new ArrayList<>();
+        for (int i = 0; i < 43; i++)
+        {
+            TO_BE_REMOVED_TITLES.add("removed " + i);
+            TO_BE_REMOVED_ITEMS.add(new FeedItem(TO_BE_REMOVED_TITLES.get(i)));
+        }
+        List<FeedItem> MERGED_ITEMS = new ArrayList<>();
+        MERGED_ITEMS.addAll(TO_BE_KEPT_ITEMS);
+        MERGED_ITEMS.addAll(TO_BE_REMOVED_ITEMS);
+        RSSFeed MERGED_FEED = new RSSFeed(new Channel("", MERGED_ITEMS));
+        FeedLocalDataSource feedLocalDataSource = Mockito.mock(FeedLocalDataSource.class);
+        Mockito.when(feedLocalDataSource.getFeed()).thenReturn(MERGED_FEED);
+
+        // mock the remote data source to do nothing
+        FeedRemoteDataSource feedRemoteDataSource = Mockito.mock(FeedRemoteDataSource.class);
+
+        // setup the interactor
+        SyncFeedInteractor syncFeedInteractor = new SyncFeedInteractorImp(feedRemoteDataSource, feedLocalDataSource);
+
+        // ask to sync
+        SyncFeedInteractor.SyncCallback callback = Mockito.mock(SyncFeedInteractor.SyncCallback.class);
+        syncFeedInteractor.sync(callback);
+
+        // verify the local data source is asked to delete something
+        Mockito.verify(feedLocalDataSource, Mockito.timeout(100)).removeItems(TO_BE_REMOVED_TITLES);
+    }
+
+    /**
      * when the interactor is asked to sync
      * but the remote data source fails(throw an exception)
      * the callback should be invoked with an error
@@ -106,5 +146,6 @@ public class SyncFeedInteractorImpTest
         // verify
         Mockito.verify(callback, Mockito.timeout(100)).error(ERROR_MESSAGE);
     }
+
 
 }
