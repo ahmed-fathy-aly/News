@@ -132,7 +132,7 @@ public class FeedListFragment extends Fragment implements FeedListContract.View,
         mSwipeRefresh.setColorSchemeResources(R.color.accent);
         
         // setup the recycler view
-        mAdapterFeed = new FeedAdapter(getContext());
+        mAdapterFeed = new FeedAdapter();
         mAdapterFeed.setListener(this);
         mLayoutManager = new LinearLayoutManager(getContext().getApplicationContext());
         mRecyclerViewFeed.setLayoutManager(mLayoutManager);
@@ -150,11 +150,11 @@ public class FeedListFragment extends Fragment implements FeedListContract.View,
     @Override
     public void onDestroyView()
     {
-        super.onDestroyView();
         ButterKnife.unbind(this);
         mPresenter.unregisterView();
         mAdapterFeed.clearReferences();
         EventBus.getDefault().unregister(this);
+        super.onDestroyView();
     }
 
     @Override

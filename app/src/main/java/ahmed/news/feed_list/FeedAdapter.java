@@ -26,16 +26,14 @@ import butterknife.internal.DebouncingOnClickListener;
  * binds a feed item to row_feed
  * Created by ahmed on 9/22/2016.
  */
-public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.FeedViewHolder>
+public  class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.FeedViewHolder>
 {
-    private Context mContext;
     private Listener mListener;
     private List<FeedItem> mData;
     private HashMap<String, Integer> mToIdx;
 
-    public FeedAdapter(Context context)
+    public FeedAdapter()
     {
-        mContext = context;
         mData = new ArrayList<>();
         mToIdx = new HashMap<>();
     }
@@ -65,7 +63,7 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.FeedViewHolder
     public FeedViewHolder onCreateViewHolder(ViewGroup parent, int viewType)
     {
         View view = LayoutInflater
-                .from(mContext)
+                .from(parent.getContext())
                 .inflate(R.layout.row_feed, parent, false);
         return new FeedViewHolder(view);
     }
@@ -78,15 +76,15 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.FeedViewHolder
         Calendar calendar = feedItem.getCalendar();
         if (calendar != null)
         {
-            String dateStr = DateUtils.getReadableData(mContext, calendar);
+            String dateStr = DateUtils.getReadableData(holder.itemView.getContext(), calendar);
             holder.textViewTime.setText(dateStr);
         }
         if (feedItem.getImage() != null && feedItem.getImage().getUrl().length() > 0)
-            Picasso.with(mContext)
+            Picasso.with(holder.itemView.getContext())
                     .load(feedItem.getImage().getUrl())
                     .placeholder(R.drawable.ic_placeholder)
                     .into(holder.imageViewThumbnial);
-        holder.textViewTitle.setTextColor(mContext.getResources().getColor(
+        holder.textViewTitle.setTextColor(holder.itemView.getContext().getResources().getColor(
                 feedItem.isRead() ? R.color.secondary_text : R.color.primary_text));
     }
 
@@ -138,7 +136,6 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.FeedViewHolder
      */
     public void clearReferences()
     {
-        mContext = null;
         mListener = null;
     }
 

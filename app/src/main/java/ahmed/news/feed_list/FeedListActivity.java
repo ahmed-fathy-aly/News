@@ -73,7 +73,6 @@ public class FeedListActivity extends AppCompatActivity implements FeedListFragm
                     .beginTransaction()
                     .setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out, android.R.anim.fade_in, android.R.anim.fade_out)
                     .replace(R.id.details_fragment_container, FeedItemDetailsFragment.newInstance(feedItem))
-                    .addToBackStack(null)
                     .commit();
             mFeedListFragment.renderUpdatedIdx();
 
