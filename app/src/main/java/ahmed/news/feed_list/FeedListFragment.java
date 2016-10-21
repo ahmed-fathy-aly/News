@@ -129,7 +129,8 @@ public class FeedListFragment extends Fragment implements FeedListContract.View,
 
         // setup swipe to refresh
         mSwipeRefresh.setOnRefreshListener(this);
-
+        mSwipeRefresh.setColorSchemeResources(R.color.accent);
+        
         // setup the recycler view
         mAdapterFeed = new FeedAdapter(getContext());
         mAdapterFeed.setListener(this);
