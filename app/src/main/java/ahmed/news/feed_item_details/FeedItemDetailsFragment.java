@@ -20,6 +20,7 @@ import javax.inject.Inject;
 
 import ahmed.news.App;
 import ahmed.news.R;
+import ahmed.news.data.DateUtils;
 import ahmed.news.entity.FeedItem;
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -132,10 +133,7 @@ public class FeedItemDetailsFragment extends Fragment implements FeedItemDetails
     public void showDate(Calendar calendar)
     {
         // show the relative date
-        String dateStr = android.text.format.DateUtils.getRelativeDateTimeString(getContext().getApplicationContext(),
-                calendar.getTimeInMillis(), android.text.format.DateUtils.MINUTE_IN_MILLIS,
-                android.text.format.DateUtils.WEEK_IN_MILLIS, android.text.format.DateUtils.FORMAT_SHOW_TIME)
-                .toString();
+        String dateStr = DateUtils.getReadableData(getContext(), calendar);
         mTextViewDate.setText(dateStr);
     }
 

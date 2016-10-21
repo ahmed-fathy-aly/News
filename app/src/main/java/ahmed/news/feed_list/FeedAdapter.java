@@ -16,6 +16,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import ahmed.news.R;
+import ahmed.news.data.DateUtils;
 import ahmed.news.entity.FeedItem;
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -77,10 +78,7 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.FeedViewHolder
         Calendar calendar = feedItem.getCalendar();
         if (calendar != null)
         {
-            String dateStr = android.text.format.DateUtils.getRelativeDateTimeString(mContext,
-                    calendar.getTimeInMillis(), android.text.format.DateUtils.MINUTE_IN_MILLIS,
-                    android.text.format.DateUtils.WEEK_IN_MILLIS, android.text.format.DateUtils.FORMAT_SHOW_TIME)
-                    .toString();
+            String dateStr = DateUtils.getReadableData(mContext, calendar);
             holder.textViewTime.setText(dateStr);
         }
         if (feedItem.getImage() != null && feedItem.getImage().getUrl().length() > 0)
