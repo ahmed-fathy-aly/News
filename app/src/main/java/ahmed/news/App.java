@@ -1,6 +1,7 @@
 package ahmed.news;
 
 import android.app.Application;
+import android.os.Build;
 import android.os.StrictMode;
 
 import com.google.android.gms.gcm.GcmNetworkManager;
@@ -25,18 +26,21 @@ public class App extends Application
         Timber.plant(new Timber.DebugTree());
         SyncTaskScheduler.scheduleRepeatingSync(this);
 
-        // setup leak canary
-        if (LeakCanary.isInAnalyzerProcess(this)) {
-            // This process is dedicated to LeakCanary for heap analysis.
-            // You should not init your app in this process.
-            return;
+        if (BuildConfig.DEBUG)
+        {
+            // setup leak canary
+            if (LeakCanary.isInAnalyzerProcess(this))
+            {
+                // This process is dedicated to LeakCanary for heap analysis.
+                // You should not init your app in this process.
+                return;
+            }
+            LeakCanary.install(this);
         }
-        LeakCanary.install(this);
 
         // setup the strict policy
         if (BuildConfig.DEBUG)
         {
-            Timber.d("enabling strict mode");
             StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder()
                     .detectAll()
                     .penaltyLog()
