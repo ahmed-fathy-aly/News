@@ -8,5 +8,7 @@
     <string name="transiation_feed_to_details_image">transiation_feed_to_details_image</string>
     <string name="transiation_feed_to_details_date">transiation_feed_to_details_date</string>>
     <string name="details">Details</string>
+    <string name="no_feed_found">No Feed Found</string>
+    <string name="error_syncing_feed">Error Syncing Feed, Please check your connection</string>
 </resources>
 

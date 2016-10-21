@@ -215,13 +215,6 @@ public class FeedListFragment extends Fragment implements FeedListContract.View,
     }
 
     @Override
-    public void showError(String errorMessage)
-    {
-        Timber.d("error %s", errorMessage);
-        Snackbar.make(mViewContainer, errorMessage, Snackbar.LENGTH_SHORT).show();
-    }
-
-    @Override
     public void showFeedList(List<FeedItem> feedList)
     {
         mAdapterFeed.setData(feedList);
@@ -258,6 +251,25 @@ public class FeedListFragment extends Fragment implements FeedListContract.View,
         // mark it as read in the adapter and store is index to later reRender it
         mAdapterFeed.markAsRead(feedItem.getTitle());
         mUpdatedIdx = idx;
+    }
+
+    @Override
+    public void showError(String errorMessage)
+    {
+        Snackbar.make(mViewContainer, errorMessage, Snackbar.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void showErrorNoFeedFound()
+    {
+        Snackbar.make(mViewContainer, R.string.no_feed_found, Snackbar.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void showErrorSyncingFeed()
+    {
+        Snackbar.make(mViewContainer, R.string.error_syncing_feed, Snackbar.LENGTH_SHORT).show();
+
     }
 
 

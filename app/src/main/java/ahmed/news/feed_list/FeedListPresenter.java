@@ -86,19 +86,23 @@ public class FeedListPresenter implements FeedListContract.Presenter
             }
 
             @Override
-            public void error(String errorMessage)
+            public void noFeedFound()
             {
                 if (mView != null)
                 {
-                    mView.showError(errorMessage);
+                    mView.showErrorNoFeedFound();
                     mView.hideProgress();
                 }
             }
 
             @Override
-            public void noFeedFound()
+            public void errorDownloadingFeed()
             {
-                // do nothing for now
+                if (mView != null)
+                {
+                    mView.showErrorSyncingFeed();
+                    mView.hideProgress();
+                }
             }
         });
     }

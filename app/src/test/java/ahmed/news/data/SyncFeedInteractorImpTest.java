@@ -3,6 +3,7 @@ package ahmed.news.data;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.Mock;
 import org.mockito.Mockito;
 
 import java.io.IOException;
@@ -19,6 +20,7 @@ import rx.android.plugins.RxAndroidPlugins;
 import rx.android.plugins.RxAndroidSchedulersHook;
 import rx.schedulers.Schedulers;
 
+import static net.bytebuddy.description.annotation.AnnotationDescription.AbstractBase.ForPrepared.ERROR_MESSAGE;
 import static org.junit.Assert.*;
 
 /**
@@ -132,20 +134,21 @@ public class SyncFeedInteractorImpTest
     public void testSyncFailed() throws IOException
     {
         // mock the remote data source to return a fixed feed
-        String ERROR_MESSAGE = "failed to bla bla bla";
         FeedRemoteDataSource feedRemoteDataSource = Mockito.mock(FeedRemoteDataSource.class);
-        Mockito.when(feedRemoteDataSource.getFeed()).thenThrow(new IOException(ERROR_MESSAGE));
+        Mockito.when(feedRemoteDataSource.getFeed()).thenThrow(new IOException());
 
         // setup the interactor
-        SyncFeedInteractor syncFeedInteractor = new SyncFeedInteractorImp(feedRemoteDataSource, null);
+        SyncFeedInteractor syncFeedInteractor = new SyncFeedInteractorImp(feedRemoteDataSource, Mockito.mock(FeedLocalDataSource.class));
 
         // ask to sync
         SyncFeedInteractor.SyncCallback callback = Mockito.mock(SyncFeedInteractor.SyncCallback.class);
         syncFeedInteractor.sync(callback);
 
         // verify
-        Mockito.verify(callback, Mockito.timeout(100)).error(ERROR_MESSAGE);
+        Mockito.verify(callback, Mockito.timeout(100)).errorDownloadingFeed();
     }
+
+
 
 
 }

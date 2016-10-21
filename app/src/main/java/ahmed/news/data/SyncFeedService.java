@@ -34,7 +34,7 @@ public class SyncFeedService extends GcmTaskService
         SyncFeedInteractor.SyncResult syncResult = mSyncFeedInteractor.syncSynchronous();
 
         // if failed then the service should be rescheduled
-        if (syncResult.getErrorMessage() != null)
+        if (syncResult.isErrorDownloadingFeed())
             return GcmNetworkManager.RESULT_RESCHEDULE;
 
         // if succeeded then notify any one listening for database updated

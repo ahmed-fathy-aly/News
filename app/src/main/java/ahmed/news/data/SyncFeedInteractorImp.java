@@ -13,6 +13,7 @@ import rx.Observable;
 import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
+import timber.log.Timber;
 
 /**
  * syncs a local feed source to match a remote one
@@ -46,14 +47,14 @@ public class SyncFeedInteractorImp implements SyncFeedInteractor
                     @Override
                     public void onError(Throwable e)
                     {
-                        callback.error(e.getMessage());
+                        callback.errorDownloadingFeed();
                     }
 
                     @Override
                     public void onNext(SyncResult syncResult)
                     {
-                        if (syncResult.getErrorMessage() != null)
-                            callback.error(syncResult.getErrorMessage());
+                        if (syncResult.isErrorDownloadingFeed() )
+                            callback.errorDownloadingFeed();
                         else if (syncResult.isNoFeedFound())
                             callback.noFeedFound();
                         else
@@ -74,7 +75,8 @@ public class SyncFeedInteractorImp implements SyncFeedInteractor
             newFeed = mFeedRemoteDataSource.getFeed();
         } catch (IOException e)
         {
-            return new SyncResult(false, e.getMessage(), null, null);
+            Timber.d("exception " + e.getMessage());
+            return new SyncResult(false, true, null, null);
         }
 
         // update the local database
@@ -84,7 +86,7 @@ public class SyncFeedInteractorImp implements SyncFeedInteractor
         // read the new feed
         RSSFeed feed = mFeedLocalDataSource.getFeed();
         if (feed == null || feed.getChannel() == null || feed.getChannel().getFeedItemList() == null)
-            return new SyncResult(true, null, null, null);
+            return new SyncResult(true, false, null, null);
 
         // keep the most latest feed items and delete the rest
         List<FeedItem> allItems = feed.getChannel().getFeedItemList();
@@ -101,6 +103,6 @@ public class SyncFeedInteractorImp implements SyncFeedInteractor
             mFeedLocalDataSource.removeItems(deletedTitles);
         }
 
-        return new SyncResult(false, null, feed.getChannel().getTitle(), newItems);
+        return new SyncResult(false, false, feed.getChannel().getTitle(), newItems);
     }
 }
