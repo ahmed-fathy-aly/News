@@ -42,6 +42,16 @@ public class FeedListContract
          * shows that this feed item is read(a mark to differentiate it from the unread one)
          */
         void markAsRead(FeedItem feedItem);
+
+        /**
+         * show that no feed was found
+         */
+        void showErrorNoFeedFound();
+
+        /**
+         * show there's an error while syncing feed
+         */
+        void showErrorSyncingFeed();
     }
 
     public interface Presenter

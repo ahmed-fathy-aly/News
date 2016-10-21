@@ -15,6 +15,7 @@ public interface SyncFeedInteractor
     /**
      * uses the data sources to sync them together
      * gets data from the remote source, adds it to the local source
+     * asks the local data source to delete the old items(only keep the first few ones)
      */
     void sync(SyncCallback syncCallback);
 
@@ -24,9 +25,9 @@ public interface SyncFeedInteractor
     {
         void syncDone(String channelTitle, List<FeedItem>  feedItemsAfterSync);
 
-        void error(String errorMessage);
-
         void noFeedFound();
+
+        void errorDownloadingFeed();
     }
 
     /**
@@ -35,14 +36,14 @@ public interface SyncFeedInteractor
     class SyncResult
     {
         private boolean mNoFeedFound;
-        private String mErrorMessage;
+        private boolean mErrorDownloadingFeed;
         private String mChannelTitle;
         private List<FeedItem> mFeedItemsAfterSync;
 
-        public SyncResult(boolean noFedFoundFeed, String errorMessage, String channelTitle, List<FeedItem> feedItemsAfterSync)
+        public SyncResult(boolean noFedFoundFeed, boolean errorDownloading, String channelTitle, List<FeedItem> feedItemsAfterSync)
         {
             mNoFeedFound = noFedFoundFeed;
-            mErrorMessage = errorMessage;
+            mErrorDownloadingFeed = errorDownloading;
             mChannelTitle = channelTitle;
             mFeedItemsAfterSync = feedItemsAfterSync;
         }
@@ -53,9 +54,9 @@ public interface SyncFeedInteractor
         }
 
 
-        public String getErrorMessage()
+        public boolean isErrorDownloadingFeed()
         {
-            return mErrorMessage;
+            return mErrorDownloadingFeed;
         }
 
         public String getChannelTitle()

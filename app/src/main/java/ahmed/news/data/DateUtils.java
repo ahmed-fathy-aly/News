@@ -1,8 +1,12 @@
 package ahmed.news.data;
 
+import android.content.Context;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+
+import static java.security.AccessController.getContext;
 
 /**
  * date parsing utils
@@ -21,4 +25,17 @@ public class DateUtils
         return simpleDateFormat.getCalendar();
     }
 
+    /**
+     * returns a date string formatted like "8 minutes ago" or "3 days aho"
+     */
+    public static String getReadableData(Context mContext, Calendar calendar)
+    {
+        String dateStr = android.text.format.DateUtils.getRelativeDateTimeString(mContext,
+                calendar.getTimeInMillis(), android.text.format.DateUtils.MINUTE_IN_MILLIS,
+                android.text.format.DateUtils.WEEK_IN_MILLIS, android.text.format.DateUtils.FORMAT_SHOW_TIME)
+                .toString();
+        if (dateStr.contains(","))
+            dateStr = dateStr.substring(0, dateStr.indexOf(","));
+        return dateStr;
+    }
 }

@@ -63,7 +63,7 @@ public class FeedItemDetailsPresenter implements FeedItemDetailsContract.Present
             String url = mFeedItem.getLink();
             if (url != null && url.length() > 0)
             {
-                String uri = (url.contains("http:") ? "" : "http") + mFeedItem.getLink();
+                String uri = (url.contains("http:") ? "" : "http:") + mFeedItem.getLink();
                 mView.openUri(uri);
             }
         }

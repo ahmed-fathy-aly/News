@@ -181,10 +181,10 @@ public class FeedListPresenterTest
 
     /**
      * when the presenter is asked to sync and the sync interactors fails,
-     * the view should be presented with the error message
+     * the view should be presented with the error
      */
     @Test
-    public void testSyncFailed()
+    public void testSyncError()
     {
         // mock the sync feed interactors and view
         String ERROR_MESSAGE = "sync failed";
@@ -201,7 +201,7 @@ public class FeedListPresenterTest
                         } catch (InterruptedException e)
                         {
                         }
-                        syncCallback.error(ERROR_MESSAGE);
+                        syncCallback.errorDownloadingFeed();
                     }
 
                     @Override
@@ -218,7 +218,50 @@ public class FeedListPresenterTest
 
         // ask the presenter to get the feed and check the view
         presenter.syncFeed();
-        verify(view, timeout(1000)).showError(ERROR_MESSAGE);
+        verify(view, timeout(1000)).showErrorSyncingFeed();
+        verify(view, timeout(100)).hideProgress();
+    }
+
+    /**
+     * when the presenter is asked to sync and the sync interactors downloads an empty feed,
+     * the view should be presented with the error
+     */
+    @Test
+    public void testSyncErrorNoFeedFound()
+    {
+        // mock the sync feed interactors and view
+        String ERROR_MESSAGE = "sync failed";
+        SyncFeedInteractor syncFeedInteractor =
+                new SyncFeedInteractor()
+                {
+                    @Override
+                    public void sync(SyncCallback syncCallback)
+                    {
+                        // simulate a delay
+                        try
+                        {
+                            Thread.sleep(400);
+                        } catch (InterruptedException e)
+                        {
+                        }
+                        syncCallback.noFeedFound();
+                    }
+
+                    @Override
+                    public SyncResult syncSynchronous()
+                    {
+                        return null;
+                    }
+                };
+        FeedListContract.View view = mock(FeedListContract.View.class);
+
+        // setup presenter
+        FeedListPresenter presenter = new FeedListPresenter(null, syncFeedInteractor);
+        presenter.registerView(view);
+
+        // ask the presenter to get the feed and check the view
+        presenter.syncFeed();
+        verify(view, timeout(1000)).showErrorNoFeedFound();
         verify(view, timeout(100)).hideProgress();
     }
 

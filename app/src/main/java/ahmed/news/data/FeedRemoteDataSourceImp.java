@@ -8,15 +8,14 @@ import retrofit2.Retrofit;
 import retrofit2.converter.simplexml.SimpleXmlConverterFactory;
 import retrofit2.http.GET;
 
+import static ahmed.news.Constants.BASE_URL;
+
 /**
  * Downloads the news feed from the remote API(fixed to be bbc news feed but most other news feeds will work too)
  * Created by ahmed on 9/20/2016.
  */
 public class FeedRemoteDataSourceImp implements FeedRemoteDataSource
 {
-    /* constants */
-    public static final String BASE_URL = "http://feeds.bbci.co.uk/";
-
     /* fields */
     private FeedAPI feedAPI;
 

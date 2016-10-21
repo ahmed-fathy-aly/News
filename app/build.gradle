@@ -63,8 +63,7 @@ dependencies {
     compile 'com.google.dagger:dagger:2.0'
     compile 'org.greenrobot:eventbus:3.0.0'
     compile 'com.google.android.gms:play-services-gcm:8.3.0'
-
-    debugCompile 'com.squareup.leakcanary:leakcanary-android:1.5'
+    compile 'com.squareup.leakcanary:leakcanary-android:1.5'
 
 
 

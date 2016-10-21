@@ -10,6 +10,7 @@ import android.support.test.rule.ActivityTestRule;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
+import org.mockito.Mockito;
 
 import java.util.Arrays;
 import java.util.List;
@@ -102,31 +103,9 @@ public class IntegrationTest
         @Override
         public FeedLocalDataSource provideFeedLocalDataSource(Context context)
         {
-            return new FeedLocalDataSource()
-            {
-                @Override
-                public RSSFeed getFeed()
-                {
-                    return new RSSFeed(new Channel("my channel", FEED_LIST));
-                }
-
-                @Override
-                public void storeFeed(RSSFeed newFeed)
-                {
-
-                }
-
-                @Override
-                public void markAsRead(List<FeedItem> feedItems)
-                {
-
-                }
-
-                @Override
-                public void markAsRead(String feedItem) {
-
-                }
-            };
+            FeedLocalDataSource feedLocalDataSource = Mockito.mock(FeedLocalDataSource.class);
+            Mockito.when(feedLocalDataSource.getFeed()).thenReturn(new RSSFeed(new Channel("my channel", FEED_LIST)));
+            return feedLocalDataSource;
         }
 
     }
