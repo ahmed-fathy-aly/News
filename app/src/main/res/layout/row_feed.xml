@@ -15,7 +15,7 @@
         android:layout_height="72dp"
         android:layout_alignParentLeft="true"
         android:padding="16dp"
-        tools:src="@drawable/ic_placeholder_small"/>
+        tools:src="@drawable/ic_placeholder"/>
 
 
     <TextView

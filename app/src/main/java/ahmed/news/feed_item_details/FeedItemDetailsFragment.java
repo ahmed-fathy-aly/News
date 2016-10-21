@@ -112,7 +112,7 @@ public class FeedItemDetailsFragment extends Fragment implements FeedItemDetails
     {
         Picasso.with(getContext())
                 .load(imageUrl)
-                .placeholder(R.drawable.ic_placeholder_small)
+                .placeholder(R.drawable.ic_placeholder_large)
                 .into(mImageViewMedia);
 
     }

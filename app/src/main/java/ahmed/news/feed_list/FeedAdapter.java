@@ -84,7 +84,7 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.FeedViewHolder
         if (feedItem.getImage() != null && feedItem.getImage().getUrl().length() > 0)
             Picasso.with(mContext)
                     .load(feedItem.getImage().getUrl())
-                    .placeholder(R.drawable.ic_placeholder_small)
+                    .placeholder(R.drawable.ic_placeholder)
                     .into(holder.imageViewThumbnial);
         holder.textViewTitle.setTextColor(mContext.getResources().getColor(
                 feedItem.isRead() ? R.color.secondary_text : R.color.primary_text));
