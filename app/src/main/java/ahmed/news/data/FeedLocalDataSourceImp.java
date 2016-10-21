@@ -44,8 +44,11 @@ public class FeedLocalDataSourceImp implements FeedLocalDataSource
         // get the channel's title(if the channel exists)
         Cursor channelCursor = database.query(DatabaseContract.ChannelEntry.TABLE_NAME
                 , null, null, null, null, null, null);
-        if (!channelCursor.moveToFirst())
+        if (!channelCursor.moveToFirst()) {
+            database.close();
+            channelCursor.close();
             return null;
+        }
         Channel channel = new Channel();
         channel.setTitle(
                 channelCursor.getString(channelCursor.getColumnIndex(
