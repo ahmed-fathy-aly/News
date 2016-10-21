@@ -5,6 +5,8 @@ import android.content.Context;
 import com.google.android.gms.gcm.GcmNetworkManager;
 import com.google.android.gms.gcm.PeriodicTask;
 
+import ahmed.news.Constants;
+
 /**
  * manages registering the feed sync service
  * Created by ahmed on 9/27/2016.
@@ -12,7 +14,6 @@ import com.google.android.gms.gcm.PeriodicTask;
 public class SyncTaskScheduler
 {
     private static final String TASK_TAG_PERIODIC = "periodicFeedSync";
-    private static final long SYNC_REPEATING_PERIOD = 60*60;
 
     /**
      * schedules a repeating task that syncs the feed
@@ -24,7 +25,7 @@ public class SyncTaskScheduler
         PeriodicTask task = new PeriodicTask.Builder()
                 .setService(SyncFeedService.class)
                 .setTag(TASK_TAG_PERIODIC)
-                .setPeriod(SYNC_REPEATING_PERIOD)
+                .setPeriod(Constants.SYNC_REPEATING_PERIOD)
                 .setPersisted(true)
                 .setUpdateCurrent(false)
                 .build();
